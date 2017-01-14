@@ -1,0 +1,4 @@
+<factorypath>
+    <factorypathentry kind="WKSPJAR" id="/VisitProcessor/visitprocessor.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="/Users/weixin/Documents/workspace/naked-object-algebras/noa.jar" enabled="true" runInBatchMode="false"/>
+</factorypath>
