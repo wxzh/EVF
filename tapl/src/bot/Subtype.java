@@ -1,9 +1,10 @@
 package bot;
 
-import bot.tyalg.external.TyAlgMatcher;
+import bot.tyalg.shared.GTyAlg;
+import utils.ISubtype;
 
-public interface Subtype<Ty> extends top.Subtype<Ty> {
-	@Override TyEqv<Ty> tyEqv();
-	@Override SubtypeAlg<Ty> subtype();
-	@Override TyAlgMatcher<Ty, Boolean> matcher();
+public interface Subtype<Ty> extends GTyAlg<Ty, ISubtype<Ty>>, top.Subtype<Ty> {
+  default ISubtype<Ty> TyBot() {
+    return ty -> true;
+  }
 }

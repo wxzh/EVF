@@ -6,7 +6,6 @@ import rcdsubbot.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, bot.Typeof<Term, Ty, Bind>, record.Typeof<Term, Ty, Bind> {
-	Subtype<Ty> subtype();
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
 	@Override GTyAlg<Ty, Ty> tyAlg();
 }

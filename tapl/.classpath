@@ -5,8 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="/VisitProcessor/visitprocessor.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/Users/weixin/Documents/workspace/naked-object-algebras/noa.jar"/>
-	<classpathentry kind="lib" path="/Users/weixin/Downloads/antlr-4.5.1-complete.jar"/>
 	<classpathentry kind="src" path="generated">
 		<attributes>
 			<attribute name="optional" value="true"/>

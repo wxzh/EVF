@@ -1,19 +1,15 @@
 package varapp;
 
-import library.Zero;
-import utils.NoRuleApplies;
-import varapp.termalg.external.TermAlgMatcher;
 import varapp.termalg.shared.GTermAlg;
-import varapp.termalg.shared.TermAlgDefault;
 
-public interface Eval1<Term> extends TermAlgDefault<Term, Term>  {
-	GTermAlg<Term, Term> alg();
-	TermShiftAndSubst<Term> termShiftAndSubst();
-	IsVal<Term> isVal();
-	TermAlgMatcher<Term, Term> matcher();
+public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
+  Term termSubstTop(Term s, Term t);
+ 	boolean isVal(Term t);
 
-	@Override default Zero<Term> m() {
-		throw new NoRuleApplies();
-	}
-
+  default Term TmVar(int p1, int p2) {
+    return noRuleApplies();
+  }
+  default Term TmApp(Term p1, Term p2) {
+    return null;
+  }
 }

@@ -3,7 +3,7 @@ package varapp;
 import java.util.function.Function;
 
 import library.Monoid;
-import untyped.OrMonoid;
+import utils.OrMonoid;
 import varapp.termalg.shared.TermAlgQueryWithCtx;
 
 public interface IsVarUsed<Term> extends TermAlgQueryWithCtx<Integer, Boolean, Term> {

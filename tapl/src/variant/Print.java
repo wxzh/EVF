@@ -9,11 +9,11 @@ import utils.Context;
 import utils.IPrint;
 import variant.termalg.shared.GTermAlg;
 
-public interface Print<Term, Ty, Bind> extends GTermAlg<Term, Ty, IPrint<Bind>>, typed.Print<Term, Ty, Bind> {
-	PrintTy<Ty, Bind> printTy();
+public interface Print<Term, Ty, Bind> extends GTermAlg<Term, Ty, IPrint<Bind>> {
+	String printTy(Ty ty, Context<Bind> ctx);
 
 	@Override default IPrint<Bind> TmTag(String label, Term t, Ty ty) {
-		return ctx -> "<" + label + "=" + visitTerm(t).print(ctx) + "> as " + printTy().visitTy(ty).print(ctx);
+		return ctx -> "<" + label + "=" + visitTerm(t).print(ctx) + "> as " + printTy(ty,ctx);
 	}
 
 	@Override default IPrint<Bind> TmCase(Term t, List<Tuple3<String, String, Term>> cases) {

@@ -25,67 +25,64 @@ import utils.bindingalg.external.BindingAlgFactory;
 
 public class TestArith {
 
-	class IsNumericalValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {
-	}
+	static class IsNumericalValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {}
 
-	class IsValImpl implements IsVal<Term>, TermAlgVisitor<Boolean> {
-	}
+	static class IsValImpl implements IsVal<Term>, TermAlgVisitor<Boolean> {}
 
-	class PrintImpl implements Print<Term, Bind>, TermAlgVisitor<IPrint<Bind>> {
+	static class PrintImpl implements Print<Term, Bind>, TermAlgVisitor<IPrint<Bind>> {
 		public TermAlgMatcher<Term, String> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 	}
 
-	class Eval1Impl implements Eval1<Term>, TermAlgVisitor<Term> {
+	static class Eval1Impl implements Eval1<Term>, TermAlgVisitor<Term> {
 		public GTermAlg<Term, Term> alg() {
 			return alg;
 		}
 
-		@Override
 		public TermAlgMatcher<Term, Term> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 
-		@Override
-		public IsNumericVal<Term> isNumericVal() {
-			return isNumericalVal;
+		public boolean isNumericVal(Term t) {
+			return isNumericalVal.visitTerm(t);
 		}
 	}
 
-	class EvalImpl implements Eval<Term> {
-		@Override
+	static class EvalImpl implements Eval<Term> {
 		public Term eval1(Term e) {
 			return e.accept(eval1);
 		}
 
-		@Override
 		public boolean isVal(Term e) {
 			return e.accept(isVal);
 		}
 	}
 
-	private TermAlgFactory alg = new TermAlgFactory();
-	private PrintImpl print = new PrintImpl();
-	private IsNumericalValImpl isNumericalVal = new IsNumericalValImpl();
-	private IsValImpl isVal = new IsValImpl();
-	private Eval1Impl eval1 = new Eval1Impl();
-	private EvalImpl eval = new EvalImpl();
-	private BindingAlgFactory bindFact = new BindingAlgFactory();
-	private Context<Bind> ctx = new Context<Bind>(bindFact);
+	static TermAlgFactory alg = new TermAlgFactory();
+	static PrintImpl print = new PrintImpl();
+	static IsNumericalValImpl isNumericalVal = new IsNumericalValImpl();
+	static IsValImpl isVal = new IsValImpl();
+	static Eval1Impl eval1 = new Eval1Impl();
+	static EvalImpl eval = new EvalImpl();
+	static BindingAlgFactory bindFact = new BindingAlgFactory();
+	static Context<Bind> ctx = new Context<Bind>(bindFact);
 
-	private Term t = alg.TmTrue();
-	private Term f = alg.TmFalse();
-	private Term if_f_then_t_else_f = alg.TmIf(f, t, f);
-	private Term zero = alg.TmZero();
-	private Term pred_zero = alg.TmPred(zero);
-	private Term succ_pred_0 = alg.TmSucc(alg.TmPred(zero));
-	private Term pred_succ_0 = alg.TmPred(alg.TmSucc(zero));
-	private Term succ_succ_0 = alg.TmSucc(alg.TmSucc(zero));
-	private Term iszero_pred_succ_succ_0 = alg.TmIsZero(alg.TmPred(alg.TmSucc(alg.TmSucc(zero))));
+	static Term t = alg.TmTrue();
+	static Term f = alg.TmFalse();
+	static Term if_f_then_t_else_f = alg.TmIf(f, t, f);
+	static Term zero = alg.TmZero();
+	static Term pred_zero = alg.TmPred(zero);
+	static Term succ_pred_0 = alg.TmSucc(alg.TmPred(zero));
+	static Term succ_succ_0 = alg.TmSucc(alg.TmSucc(zero));
+	static Term iszero_pred_succ_succ_0 = alg.TmIsZero(alg.TmPred(alg.TmSucc(alg.TmSucc(zero))));
 
-	String print(Term t) {
+	static String print(Term t) {
 		return t.accept(print).print(ctx);
+	}
+
+	static void println(Term t) {
+		System.out.println(t.accept(print).print(ctx));
 	}
 
 	@Test
@@ -118,11 +115,18 @@ public class TestArith {
 	}
 
 	@Test
-	public void evalTest() {
+	public void testAll() {
 		assertEquals("true", print(eval.eval(t)));
 		assertEquals("false", print(eval.eval(if_f_then_t_else_f)));
+		assertEquals("0", print(eval.eval(zero)));
 		assertEquals("1", print(eval.eval(succ_pred_0)));
-		assertEquals("0", print(eval.eval(pred_succ_0)));
 		assertEquals("false", print(eval.eval(iszero_pred_succ_succ_0)));
 	}
+	public static void main(String[] args) {
+		println(eval.eval(t));
+		println(eval.eval(if_f_then_t_else_f));
+		println(eval.eval(zero));
+		println(eval.eval(succ_pred_0));
+		println(eval.eval(iszero_pred_succ_succ_0));
+    }
 }

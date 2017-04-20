@@ -5,7 +5,6 @@ import bot.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends top.Typeof<Term, Ty, Bind> {
-	Subtype<Ty> subtype();
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
 	@Override GTyAlg<Ty, Ty> tyAlg();
 
@@ -15,9 +14,9 @@ public interface Typeof<Term, Ty, Bind> extends top.Typeof<Term, Ty, Bind> {
 			Ty ty2 = visitTerm(t2).typeof(ctx);
 
 			return tyMatcher()
-					.TyArr(ty11 -> ty12 -> subtype().subtype(ty2, ty11) ? ty12 : m().empty().typeof(ctx))
+					.TyArr(ty11 -> ty12 -> subtype(ty2, ty11) ? ty12 : typeError("parameter type mismatch"))
 					.TyBot(() -> tyAlg().TyBot())
-					.otherwise(() -> m().empty().typeof(ctx))
+					.otherwise(() -> typeError("arrow type expected"))
 					.visitTy(ty1);
 		};
 	}

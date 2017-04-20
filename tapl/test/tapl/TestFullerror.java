@@ -1,189 +1,184 @@
 package tapl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.function.Function;
 
 import org.junit.Test;
 
-import fullerror.Join;
+import fullerror.Eval1;
+import fullerror.IsVal;
 import fullerror.JoinMeet;
-import fullerror.Meet;
 import fullerror.Print;
 import fullerror.PrintTy;
 import fullerror.Subtype;
-import fullerror.SubtypeAlg;
+import fullerror.TmMap;
 import fullerror.TyEqv;
 import fullerror.Typeof;
 import fullerror.termalg.external.Term;
 import fullerror.termalg.external.TermAlgFactory;
+import fullerror.termalg.external.TermAlgMatcher;
+import fullerror.termalg.external.TermAlgMatcherImpl;
 import fullerror.termalg.external.TermAlgVisitor;
+import fullerror.termalg.shared.GTermAlg;
 import fullerror.tyalg.external.Ty;
 import fullerror.tyalg.external.TyAlgFactory;
 import fullerror.tyalg.external.TyAlgMatcher;
 import fullerror.tyalg.external.TyAlgMatcherImpl;
 import fullerror.tyalg.external.TyAlgVisitor;
 import fullerror.tyalg.shared.GTyAlg;
-import typed.GetTypeFromBind;
-import typed.PrintBind;
-import typed.bindingalg.external.Bind;
-import typed.bindingalg.external.BindingAlgFactory;
-import typed.bindingalg.external.BindingAlgVisitor;
-import typed.bindingalg.shared.GBindingAlg;
+import fullsimple.GetTypeFromBind;
+import fullsimple.PrintBind;
+import fullsimple.bindingalg.external.Bind;
+import fullsimple.bindingalg.external.BindingAlgFactory;
+import fullsimple.bindingalg.external.BindingAlgVisitor;
+import fullsimple.bindingalg.shared.GBindingAlg;
 import utils.Context;
+import utils.Eval;
 import utils.IJoin;
 import utils.IMeet;
 import utils.IPrint;
 import utils.ISubtype;
 import utils.ITyEqv;
 import utils.ITypeof;
+import utils.TmMapCtx;
 
 public class TestFullerror {
-	class PrintTyImpl implements PrintTy<Ty, Bind<Ty>>, TyAlgVisitor<IPrint<Bind<Ty>>> {
-	}
+	class PrintAll implements Print<Term<Ty>, Ty, Bind<Term<Ty>,Ty>>, TermAlgVisitor<IPrint<Bind<Term<Ty>,Ty>>, Ty>,
+	    PrintTy<Ty, Bind<Term<Ty>,Ty>>, TyAlgVisitor<IPrint<Bind<Term<Ty>,Ty>>>,
+      PrintBind<Bind<Term<Ty>,Ty>,Term<Ty>,Ty>, BindingAlgVisitor<IPrint<Bind<Term<Ty>,Ty>>,Term<Ty>,Ty> {
 
-	class PrintBindImpl implements PrintBind<Bind<Ty>, Ty>,
-			BindingAlgVisitor<IPrint<Bind<Ty>>, Ty> {
-
-		@Override
-		public PrintTy<Ty, Bind<Ty>> printTy() {
-			return printTy;
-		}
-	}
-
-	class PrintImpl implements Print<Term<Ty>, Ty, Bind<Ty>>, TermAlgVisitor<IPrint<Bind<Ty>>, Ty> {
-		@Override
-		public PrintTy<Ty, Bind<Ty>> printTy() {
-			return printTy;
-		}
-
-		@Override
-		public PrintBind<Bind<Ty>, Ty> printBind() {
-			return printBind;
-		}
+	  public String printTy(Ty ty, Context<Bind<Term<Ty>,Ty>> ctx) {
+	    return visitTy(ty).print(ctx);
+	  }
+	  public String printBind(Bind<Term<Ty>,Ty> bind, Context<Bind<Term<Ty>,Ty>> ctx) {
+	    return visitBind(bind).print(ctx);
+	  }
+	  public String printTerm(Term<Ty> t, Context<Bind<Term<Ty>, Ty>> ctx) {
+	    return visitTerm(t).print(ctx);
+	  }
 	}
 
 	class TyEqvImpl implements TyEqv<Ty>, TyAlgVisitor<ITyEqv<Ty>> {
-		@Override
-		public TyAlgMatcher<Ty, Boolean> matcher() {
+		@Override public TyAlgMatcher<Ty, Boolean> matcher() {
 			return new TyAlgMatcherImpl<>();
 		}
 	}
 
-	class SubtypeImpl implements Subtype<Ty> {
-		@Override
-		public TyAlgMatcher<Ty, Boolean> matcher() {
+	class SubtypeImpl implements Subtype<Ty>, TyAlgVisitor<ISubtype<Ty>> {
+		@Override public TyAlgMatcher<Ty, Boolean> matcher() {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		@Override
-		public TyEqv<Ty> tyEqv() {
-			return tyEqv;
-		}
-
-		class SubtypeAlgImpl extends SubtypeImpl implements SubtypeAlg<Ty>, TyAlgVisitor<ISubtype<Ty>> {
-		}
-
-		@Override
-		public SubtypeAlg<Ty> subtype() {
-			return new SubtypeAlgImpl();
+		@Override public boolean tyEqv(Ty ty1, Ty ty2) {
+		  return tyEqv.visitTy(ty1).tyEqv(ty2);
 		}
 	}
 
-	class GetTypeFromBindImpl implements GetTypeFromBind<Bind<Ty>, Ty>, BindingAlgVisitor<Ty, Ty> {}
+	class GetTypeFromBindImpl implements GetTypeFromBind<Bind<Term<Ty>,Ty>,Term<Ty>,Ty>, BindingAlgVisitor<Ty,Term<Ty>,Ty> {}
 
 	class JoinMeetImpl implements JoinMeet<Ty> {
-		@Override
-		public Subtype<Ty> subtype() {
-			return subtype;
-		}
+	  @Override public boolean subtype(Ty ty1, Ty ty2) {
+	    return subtype.visitTy(ty1).subtype(ty2);
+	  }
 
-		@Override
-		public TyAlgMatcher<Ty, Ty> matcher() {
+		@Override public TyAlgMatcher<Ty, Ty> matcher() {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		@Override
-		public GTyAlg<Ty, Ty> alg() {
+		@Override public GTyAlg<Ty, Ty> alg() {
 			return tyFact;
 		}
 
 		class JoinImpl extends JoinMeetImpl implements Join<Ty>, TyAlgVisitor<IJoin<Ty>> {}
 		class MeetImpl extends JoinMeetImpl implements Meet<Ty>, TyAlgVisitor<IMeet<Ty>> {}
 
-		@Override
-		public Meet<Ty> meet() {
-			return new MeetImpl();
+		public Ty meetImpl(Ty ty1, Ty ty2) {
+			return new MeetImpl().visitTy(ty1).meet(ty2);
 		}
 
-		@Override
-		public Join<Ty> join() {
-			return new JoinImpl();
+		public Ty joinImpl(Ty ty1, Ty ty2) {
+			return new JoinImpl().visitTy(ty1).join(ty2);
 		}
 	}
 
-
-	class TypeofImpl implements Typeof<Term<Ty>, Ty, Bind<Ty>>, TermAlgVisitor<ITypeof<Ty, Bind<Ty>>, Ty> {
-		@Override
-		public GBindingAlg<Bind<Ty>, Ty, Bind<Ty>> bindAlg() {
+	class TypeofImpl implements Typeof<Term<Ty>, Ty, Bind<Term<Ty>,Ty>>, TermAlgVisitor<ITypeof<Ty, Bind<Term<Ty>,Ty>>, Ty> {
+	  public Ty join(Ty ty1, Ty ty2) {
+	    return new JoinMeetImpl().join(ty1, ty2);
+	  }
+	  public boolean subtype(Ty ty1, Ty ty2) {
+	    return subtype.visitTy(ty1).subtype(ty2);
+	  }
+    public Ty getTypeFromBind(Bind<Term<Ty>,Ty> bind) {
+      return new GetTypeFromBindImpl().visitBind(bind);
+    }
+		public GBindingAlg<Bind<Term<Ty>,Ty>,Term<Ty>,Ty,Bind<Term<Ty>,Ty>> bindAlg() {
 			return bindFact;
 		}
-
-		@Override
-		public JoinMeet<Ty> joinMeet() {
-			return new JoinMeetImpl();
-		}
-
-		@Override
 		public GTyAlg<Ty, Ty> tyAlg() {
 			return tyFact;
 		}
-
-		@Override
-		public TyEqv<Ty> tyEqv() {
-			return tyEqv;
+		public boolean tyEqv(Ty ty1, Ty ty2) {
+			return tyEqv.visitTy(ty1).tyEqv(ty2);
 		}
-
-		@Override
 		public TyAlgMatcher<Ty, Ty> tyMatcher() {
 			return new TyAlgMatcherImpl<>();
 		}
-
-		@Override
-		public GetTypeFromBind<Bind<Ty>, Ty> getTypeFromBind() {
-			return new GetTypeFromBindImpl();
-		}
-
-		@Override
-		public Subtype<Ty> subtype() {
-			return subtype;
-		}
 	}
 
-	// printers
-	PrintTyImpl printTy = new PrintTyImpl();
-	PrintImpl printTerm = new PrintImpl();
-	PrintBindImpl printBind = new PrintBindImpl();
+	 class Eval1Impl implements Eval1<Term<Ty>, Ty>, TermAlgVisitor<Term<Ty>, Ty> {
+	    public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
+	      return new TermAlgMatcherImpl<>();
+	    }
+	    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	      return tmFact;
+	    }
+	    public Term<Ty> termSubstTop(Term<Ty> s, Term<Ty> t) {
+	      return new TmMapImpl().termSubstTop(s, t);
+	    }
+	    public boolean isVal(Term<Ty> t) {
+	      return new IsValImpl().visitTerm(t);
+	    }
+	  }
+	  class EvalImpl implements Eval<Term<Ty>> {
+	    public Term<Ty> eval1(Term<Ty> t) {
+	      return new Eval1Impl().visitTerm(t);
+	    }
+	    public boolean isVal(Term<Ty> t) {
+	      return new IsValImpl().visitTerm(t);
+	    }
+	  }
+	  class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
+	  class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
+	    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	      return tmFact;
+	    }
+	  }
+
+	PrintAll print = new PrintAll();
 
 	// elements
 	Ty ty;
-	Bind<Ty> bind;
+	Bind<Term<Ty>,Ty> bind;
 	Term<Ty> term;
 
 	// factories
+	TermAlgFactory<Ty> tmFact = new TermAlgFactory<>();
 	TyAlgFactory tyFact = new TyAlgFactory();
-	BindingAlgFactory<Ty> bindFact = new BindingAlgFactory<>();
+	BindingAlgFactory<Term<Ty>,Ty> bindFact = new BindingAlgFactory<>();
 	TermAlgFactory<Ty> termFact = new TermAlgFactory<>();
 
-	Context<Bind<Ty>> ctx = new Context<Bind<Ty>>(bindFact);
+	Context<Bind<Term<Ty>,Ty>> ctx = new Context<Bind<Term<Ty>,Ty>>(bindFact);
 
 	Ty bool = tyFact.TyBool();
 	Ty top = tyFact.TyTop();
 	Ty bot = tyFact.TyBot();
-	Ty arr = tyFact.TyArr(bool, top);
 
 	Term<Ty> t = termFact.TmTrue();
+	Term<Ty> f = termFact.TmFalse();
 	Term<Ty> error = termFact.TmError();
+	Term<Ty> if_error_true_false = termFact.TmIf(error, t, f);
 	Term<Ty> tryErrorWithTrue = termFact.TmTry(error, t);
 
 	// typer
@@ -193,54 +188,12 @@ public class TestFullerror {
 
 	@Test
 	public void printTest() {
-		assertEquals("error", error.accept(printTerm).print(ctx));
-		assertEquals("try error with true", tryErrorWithTrue.accept(printTerm).print(ctx));
-	}
-
-	@Test
-	public void printTyTest() {
-		assertEquals("Top", top.accept(printTy).print(ctx));
-		assertEquals("Bot", bot.accept(printTy).print(ctx));
-		assertEquals("(Bool -> Top)", arr.accept(printTy).print(ctx));
-	}
-
-	@Test
-	public void subtypeTest() {
-		// S-REFL
-		assertTrue(subtype.subtype(bot, bot));
-		assertTrue(subtype.subtype(top, top));
-		assertTrue(subtype.subtype(arr, arr));
-
-		// S-BOT
-		assertTrue(subtype.subtype(bot, bool));
-		assertTrue(subtype.subtype(bot, arr));
-		assertTrue(subtype.subtype(bot, top));
-
-		// S-TOP
-		assertTrue(subtype.subtype(bot, top));
-		assertTrue(subtype.subtype(bool, top));
-		assertTrue(subtype.subtype(arr, top));
-
-		// S-ARROW
-		// T1 <: S1  S2 <: T2
-		// ------------------
-		//  S1->S2 <: T1->T2
-		assertFalse(subtype.subtype(tyFact.TyArr(top, top), tyFact.TyArr(top, bool)));
-		assertTrue(subtype.subtype(tyFact.TyArr(top, top), tyFact.TyArr(bool, top)));
-		assertFalse(subtype.subtype(tyFact.TyArr(bot, bot), tyFact.TyArr(bool, bot)));
-		assertTrue(subtype.subtype(tyFact.TyArr(bot, bot), tyFact.TyArr(bot, bool)));
-		assertTrue(subtype.subtype(tyFact.TyArr(top, bot), tyFact.TyArr(bool, bool)));
-	}
-
-	@Test
-	public void joinTest(){
-
+		assertEquals("if error then true else false", print.printTerm(if_error_true_false, ctx));
+		assertEquals("try error with true", print.printTerm(tryErrorWithTrue, ctx));
 	}
 
 	@Test
 	public void typeofTest() {
 		assertTrue(bot.accept(tyEqv).tyEqv(error.accept(typeof).typeof(ctx)));
-//		assertTrue(tyEqv"error", error.accept(printTerm).apply(ctx));
-//		assertEquals("try error with true", tryErrorWithTrue.accept(printTerm).apply(ctx));
 	}
 }

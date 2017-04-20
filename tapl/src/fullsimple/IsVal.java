@@ -1,7 +1,6 @@
 package fullsimple;
 
-import fullsimple.termalg.shared.TermAlgDefault;
+import fullsimple.termalg.shared.GTermAlg;
 
-public interface IsVal<Term, Ty> extends TermAlgDefault<Term, Ty, Boolean>, moreextension.IsVal<Term, Ty>,
-    typed.IsVal<Term, Ty>, variant.IsVal<Term, Ty> {
-}
+public interface IsVal<Term, Ty> extends GTermAlg<Term, Ty, Boolean>,
+  typed.IsVal<Term, Ty>, variant.IsVal<Term, Ty>, moreextension.IsVal<Term, Ty> {}

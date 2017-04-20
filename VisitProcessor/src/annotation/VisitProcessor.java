@@ -1,16 +1,10 @@
 package annotation;
 
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -434,34 +428,6 @@ public class VisitProcessor extends AbstractProcessor {
         content += "}\n";
         write(name, content);
     }
-
-    private void genParser() throws IOException {
-        String name = thisWith("grammar");
-        Map<String, List<Alternative>> prods =
-                self.allMethods.stream()
-                .filter(m -> m.element.getAnnotation(Syntax.class) != null)
-                .map(m -> getSyntax(m))
-                .collect(groupingBy(alt -> alt.getNT(), toList()))
-                .entrySet().stream()
-                .collect(toMap(Entry::getKey, e -> e.getValue().stream().sorted().collect(toList())));
-        AlgGrammar grammar = new AlgGrammar(prods, self.name, toPackage, folder+"/");
-//        String filePath = folder + "/" + "grammar";
-//        File f = new File(filePath);
-//        if (!f.exists()) {
-//            JavaFileObject file = filer.createSourceFile(filePath);
-//            filer.createResource(f, toPackage, "grammar");
-//            file.openWriter().append(content).close();
-//        }
-        grammar.generate();
-        write(name, grammar.toString());
-    }
-
-	public Alternative getSyntax(MethodInfo m) {
-	    Element e = m.element;
-	    Syntax syntax = e.getAnnotation(Syntax.class);
-	    Level level = e.getAnnotation(Level.class);
-	    return new Alternative(level == null ? Integer.MAX_VALUE : level.value(), syntax.value(), m);
-	}
 
     // utility functions
     private String declarePackage() {

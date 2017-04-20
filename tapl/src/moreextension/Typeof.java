@@ -6,7 +6,6 @@ import moreextension.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, extension.Typeof<Term, Ty, Bind> {
-	@Override TyEqv<Ty> tyEqv();
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
 	@Override GTyAlg<Ty, Ty> tyAlg();
 
@@ -22,8 +21,8 @@ public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, B
 		return ctx -> {
 			Ty tyT = visitTerm(t).typeof(ctx);
 			return tyMatcher()
-					.TyArr(ty1 -> ty2 -> tyEqv().visitTy(ty1).tyEqv(ty2) ? ty2 : m().empty().typeof(ctx))
-					.otherwise(() -> m().empty().typeof(ctx))
+					.TyArr(ty1 -> ty2 -> tyEqv(ty1,ty2) ? ty2 : typeError("result of body not compatible with domain"))
+					.otherwise(() -> typeError("arrow type expected"))
 					.visitTy(tyT);
 		};
 	}
@@ -31,7 +30,7 @@ public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, B
 	@Override default ITypeof<Ty, Bind> TmAscribe(Term t, Ty ty) {
 		return ctx -> {
 			Ty tyT = visitTerm(t).typeof(ctx);
-			return tyEqv().visitTy(tyT).tyEqv(ty) ? ty : m().empty().typeof(ctx);
+			return tyEqv(tyT,ty) ? ty : typeError("body of as-term does not have the expected type");
 		};
 	}
 }

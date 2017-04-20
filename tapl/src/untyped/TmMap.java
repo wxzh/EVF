@@ -3,7 +3,7 @@ package untyped;
 import java.util.function.Function;
 
 import untyped.termalg.shared.TermAlgTransformWithCtx;
-import varapp.TmMapCtx;
+import utils.TmMapCtx;
 
 public interface TmMap<Term> extends TermAlgTransformWithCtx<TmMapCtx<Term>, Term>, varapp.TmMap<Term> {
 	default Function<TmMapCtx<Term>, Term> TmAbs(String x, Term t) {

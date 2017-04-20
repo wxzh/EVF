@@ -6,54 +6,47 @@ import java.util.function.Function;
 import untyped.ConstFunElim;
 import untyped.GetBodyFromTmAbs;
 import untyped.IsVarUsed;
-import untyped.TermShift;
 import untyped.TmMap;
 import untyped.termalg.external.Term;
 import untyped.termalg.external.TermAlgFactory;
 import untyped.termalg.external.TermAlgVisitor;
 import untyped.termalg.shared.GTermAlg;
-import varapp.TmMapCtx;
+import utils.TmMapCtx;
 
-class PrintImpl implements GTermAlg<Term, String>, TermAlgVisitor<String> {
-    public String TmApp(Term p1, Term p2) {
-        return "(" + visitTerm(p1) + ") " + visitTerm(p2);
-    }
-    public String TmVar(int p1, int p2) {
-        return "" + p1;
-    }
+public class TestConstFunElim {
+  static class PrintImpl implements GTermAlg<Term, String>, TermAlgVisitor<String> {
+      public String TmApp(Term p1, Term p2) {
+          return "(" + visitTerm(p1) + ") " + visitTerm(p2);
+      }
+      public String TmVar(int p1, int p2) {
+          return "" + p1;
+      }
 
-    public String TmAbs(String p1, Term p2) {
-        return "\\" + visitTerm(p2);
-    }
-}
-  class GetBodyFromTmAbsImpl implements GetBodyFromTmAbs<Term>, TermAlgVisitor<Optional<Term>> {}
-  class IsVarUsedImpl implements IsVarUsed<Term>, TermAlgVisitor<Function<Integer,Boolean>> {}
-  class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
+      public String TmAbs(String p1, Term p2) {
+          return "\\" + visitTerm(p2);
+      }
+  }
+  static class GetBodyFromTmAbsImpl implements GetBodyFromTmAbs<Term>, TermAlgVisitor<Optional<Term>> {}
+  static class IsVarUsedImpl implements IsVarUsed<Term>, TermAlgVisitor<Function<Integer,Boolean>> {}
+  static class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
     public GTermAlg<Term, Term> alg() {
         return new TermAlgFactory();
     }
   }
-  class ElimImpl implements ConstFunElim<Term>, TermAlgVisitor<Term> {
-    public GetBodyFromTmAbs<Term> getBodyFromTmAbs() {
-        return new GetBodyFromTmAbsImpl();
+  static class ElimImpl implements ConstFunElim<Term>, TermAlgVisitor<Term> {
+    public boolean isVarUsed(int n, Term t) {
+      return new IsVarUsedImpl().visitTerm(t).apply(n);
+    }
+    public Optional<Term> getBodyFromTmAbs(Term t) {
+      return new GetBodyFromTmAbsImpl().visitTerm(t);
     }
     public untyped.termalg.shared.GTermAlg<Term, Term> alg() {
         return new TermAlgFactory();
     }
-    public IsVarUsed<Term> isVarUsed() {
-        return new IsVarUsedImpl();
-    }
-    public TermShift<Term> termShift(int d) {
-        class TermShiftImpl implements TermShift<Term>, TermAlgVisitor<Function<Integer, untyped.termalg.external.Term>> {
-            public int d() { return d; }
-            public GTermAlg<Term, Term> alg() {
-                return new TermAlgFactory();
-            }
-        }
-        return new TermShiftImpl();
+    @Override public Term termShift(int d, Term t) {
+      return new TmMapImpl().termShift(d, t);
     }
   }
-public class TestConstFunElim {
 
   static void test(untyped.termalg.external.Term t) {
       PrintImpl print = new PrintImpl();

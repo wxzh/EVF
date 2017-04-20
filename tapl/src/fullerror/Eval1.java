@@ -3,11 +3,9 @@ package fullerror;
 import fullerror.termalg.external.TermAlgMatcher;
 import fullerror.termalg.shared.GTermAlg;
 
-public interface Eval1<Term, Ty> extends simplebool.Eval1<Term, Ty> {
+public interface Eval1<Term, Ty> extends GTermAlg<Term, Ty, Term>, simplebool.Eval1<Term, Ty> {
 	@Override TermAlgMatcher<Term, Ty, Term> matcher();
-	@Override IsVal<Term, Ty> isVal();
 	@Override GTermAlg<Term, Ty, Term> alg();
-	@Override TermShiftAndSubst<Term, Ty> termShiftAndSubst();
 
 	@Override default Term TmIf(Term t1, Term t2, Term t3) {
 		return matcher()
@@ -19,10 +17,16 @@ public interface Eval1<Term, Ty> extends simplebool.Eval1<Term, Ty> {
 	@Override default Term TmApp(Term t1, Term t2) {
 		return matcher()
 				.TmError(() -> alg().TmError())
-				.otherwise(() -> isVal().visitTerm(t1) ? matcher()
+				.otherwise(() -> isVal(t1) ? matcher()
 						.TmError(() -> alg().TmError())
 						.otherwise(() -> simplebool.Eval1.super.TmApp(t1, t2))
 						.visitTerm(t2) : simplebool.Eval1.super.TmApp(t1, t2))
 				.visitTerm(t1);
+	}
+	@Override default Term TmError() {
+	  return noRuleApplies();
+	}
+	@Override default Term TmTry(Term p1, Term p2) {
+	  return noRuleApplies();
 	}
 }

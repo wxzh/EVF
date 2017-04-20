@@ -8,8 +8,8 @@ import library.Tuple2;
 import utils.ITyEqv;
 import variant.tyalg.external.TyAlgMatcher;
 
-public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>>, typed.TyEqv<Ty> {
-	@Override TyAlgMatcher<Ty, Boolean> matcher();
+public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>> {
+	TyAlgMatcher<Ty, Boolean> matcher();
 
 	@Override default ITyEqv<Ty> TyVariant(List<Tuple2<String, Ty>> fields1) {
 		return ty -> matcher().TyVariant(

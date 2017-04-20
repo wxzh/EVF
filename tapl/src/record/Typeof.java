@@ -9,9 +9,9 @@ import record.tyalg.external.TyAlgMatcher;
 import record.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
-public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, typed.Typeof<Term, Ty, Bind> {
-	@Override GTyAlg<Ty, Ty> tyAlg();
-	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
+public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
+	GTyAlg<Ty, Ty> tyAlg();
+	TyAlgMatcher<Ty, Ty> tyMatcher();
 
 	@Override default ITypeof<Ty, Bind> TmRecord(List<Tuple2<String, Term>> fields) {
 		return ctx -> tyAlg().TyRecord(fields.stream().map(pr -> new Tuple2<>(pr._1, visitTerm(pr._2).typeof(ctx)))
@@ -23,8 +23,9 @@ public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>
 			Ty tyT = visitTerm(t).typeof(ctx);
 			return tyMatcher()
 					.TyRecord(fieldTys -> fieldTys.stream().filter(pr -> pr._1.equals(l)).findFirst().map(pr -> pr._2)
-							.orElseGet(() -> m().empty().typeof(ctx)))
-					.otherwise(() -> m().empty().typeof(ctx)).visitTy(tyT);
+							.orElseGet(() -> typeError("label " + l + " not found")))
+					.otherwise(() -> typeError("Expected record type"))
+					.visitTy(tyT);
 		};
 	}
 }

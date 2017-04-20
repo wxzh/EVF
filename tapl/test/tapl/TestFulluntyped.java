@@ -12,10 +12,8 @@ import org.junit.Test;
 
 import fulluntyped.Eval1;
 import fulluntyped.IsNumericVal;
-import fulluntyped.IsVal;
 import fulluntyped.Print;
 import fulluntyped.PrintBind;
-import fulluntyped.TermShiftAndSubst;
 import fulluntyped.TmMap;
 import fulluntyped.bindingalg.external.Bind;
 import fulluntyped.bindingalg.external.BindingAlgFactory;
@@ -32,7 +30,7 @@ import library.Tuple2;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
-import varapp.TmMapCtx;
+import utils.TmMapCtx;
 
 public class TestFulluntyped {
 	class PrintImpl implements Print<Term, Bind<Term>>, TermAlgVisitor<IPrint<Bind<Term>>> {
@@ -40,74 +38,45 @@ public class TestFulluntyped {
 			return new TermAlgMatcherImpl<>();
 		}
 
-		@Override
-		public IPrint<Bind<Term>> visitTerm(Term e) {
-			return TermAlgVisitor.super.visitTerm(e);
-		}
-
-		@Override
-		public PrintBind<Bind<Term>, Term> printBind() {
-			return new PrintBindImpl();
+		public String printBind(Bind<Term> bind, Context<Bind<Term>> ctx) {
+		  return new PrintBindImpl().visitBind(bind).print(ctx);
 		}
 	}
 
-	class PrintBindImpl implements PrintBind<Bind<Term>, Term>,
-			BindingAlgVisitor<IPrint<Bind<Term>>, Term> {
-		@Override
-		public Print<Term, Bind<Term>> printTerm() {
-			return new PrintImpl();
-		}
+	class PrintBindImpl implements PrintBind<Bind<Term>, Term>, BindingAlgVisitor<IPrint<Bind<Term>>, Term> {
+	  public String printTerm(Term t, Context<Bind<Term>> ctx) {
+	    return new PrintImpl().visitTerm(t).print(ctx);
+	  }
 	}
 
-	class IsNumericValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {
-	}
+	class IsNumericValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {}
 
-	class IsValImpl implements fulluntyped.IsVal<Term>, TermAlgVisitor<Boolean> {
-	}
+	class IsValImpl implements fulluntyped.IsVal<Term>, TermAlgVisitor<Boolean> {}
 
-	class TermShiftAndSubstImpl implements TermShiftAndSubst<Term> {
-		class TmMapImpl implements TmMap<Term>,
-				TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
-			public GTermAlg<Term, Term> alg() {
-				return fact;
-			}
+  class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
+    public GTermAlg<Term, Term> alg() {
+      return fact;
+    }
+  }
+
+	abstract class Eval1Impl implements Eval1<Term, Bind<Term>>, TermAlgVisitor<Term> {
+	  @Override public Term termSubstTop(Term s, Term t) {
+	    return deBruijn.termSubstTop(s, t);
+	  }
+
+		@Override public boolean isNumericVal(Term e) {
+			return new IsNumericValImpl().visitTerm(e);
 		}
 
-		public TmMap<Term> tmMap() {
-			return new TmMapImpl();
+		@Override public boolean isVal(Term e) {
+			return isVal.visitTerm(e);
 		}
 
-		@Override
-		public varapp.termalg.shared.GTermAlg<Term, Term> alg() {
-			return fact;
-		}
-	}
-
-	abstract class Eval1Impl implements Eval1<Term, Bind<Term>>,
-			TermAlgVisitor<Term> {
-
-		@Override
-		public TermShiftAndSubst<Term> termShiftAndSubst() {
-			return new TermShiftAndSubstImpl();
-		}
-
-		@Override
-		public IsNumericVal<Term> isNumericVal() {
-			return new IsNumericValImpl();
-		}
-
-		@Override
-		public IsVal<Term> isVal() {
-			return isVal;
-		}
-
-		@Override
-		public BindingAlgMatcher<Bind<Term>, Term, Term> bindMatcher() {
+		@Override public BindingAlgMatcher<Bind<Term>, Term, Term> bindMatcher() {
 			return new BindingAlgMatcherImpl<>();
 		}
 
-		@Override
-		public GTermAlg<Term, Term> alg() {
+		@Override public GTermAlg<Term, Term> alg() {
 			return fact;
 		}
 
@@ -117,27 +86,22 @@ public class TestFulluntyped {
 	}
 
 	abstract class EvalImpl implements Eval<Term> {
-		@Override
-		public boolean isVal(Term t) {
+		@Override public boolean isVal(Term t) {
 			return t.accept(isVal);
 		}
 	}
 
 	EvalImpl evalCtx(Context<Bind<Term>> ctx) {
 		return new EvalImpl() {
-			@Override
 			public Term eval1(Term t) {
 				return t.accept(new Eval1Impl() {
-					@Override
 					public Context<Bind<Term>> ctx() {
 						return ctx;
-					}
-				});
-			}
-		};
+        }});
+    }};
 	}
 
-	TermShiftAndSubstImpl termShiftAndSubst = new TermShiftAndSubstImpl();
+	TmMapImpl deBruijn = new TmMapImpl();
 	TermAlgFactory fact = new TermAlgFactory();
 	BindingAlgFactory<Term> bindFact = new BindingAlgFactory<>();
 	Context<Bind<Term>> ctx = new Context<>(new BindingAlgFactory<>());
@@ -177,6 +141,7 @@ public class TestFulluntyped {
 		assertEquals("hello", hello.accept(print).print(ctx));
 		assertEquals("timesfloat timesfloat 2.0 3.0 timesfloat 4.0 5.0", timesfloat.accept(print).print(ctx));
 		assertEquals("0", o.accept(print).print(ctx));
+
 		assertEquals("(succ (pred 0))", succ_pred_0.accept(print).print(ctx));
 		assertEquals("let x=true in x", let_x_t_in_x.accept(print).print(ctx));
 		assertEquals("let t={x=\\x.x,y=\\x.x \\x.x x}.x true in if t then 0 else (succ (pred 0))", mixed.accept(print).print(ctx));
@@ -234,12 +199,12 @@ public class TestFulluntyped {
 	public void testShift() {
 		Term x2 = fact.TmVar(1, 2);
 		Term y = fact.TmVar(0, 2);
-		assertEquals("if x then y else if y then x else x", termShiftAndSubst.termShift(0, fact.TmIf(x2, y, fact.TmIf(y, x2, x2))).accept(print).print(ctx2));
-		assertEquals("x", termShiftAndSubst.termShift(1, x).accept(print).print(ctx2));
+		assertEquals("if x then y else if y then x else x", deBruijn.termShift(0, fact.TmIf(x2, y, fact.TmIf(y, x2, x2))).accept(print).print(ctx2));
+		assertEquals("x", deBruijn.termShift(1, x).accept(print).print(ctx2));
 
 		// (\.\.1 (0 2)) -> (\.\.1 (0 4))
 		Term e = fact.TmAbs("x", fact.TmAbs("y", fact.TmApp(fact.TmVar(1, 3), fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))));
-		assertEquals("\\x.\\y.[bad index: 1/5 in {(y,), (x,)}] [bad index: 0/5 in {(y,), (x,)}] [bad index: 4/5 in {(y,), (x,)}]", termShiftAndSubst.termShift(2, e).accept(print).print(ctx));
+		assertEquals("\\x.\\y.[bad index: 1/5 in {(y,), (x,)}] [bad index: 0/5 in {(y,), (x,)}] [bad index: 4/5 in {(y,), (x,)}]", deBruijn.termShift(2, e).accept(print).print(ctx));
 	}
 
 	// Exercise 6.2.5
@@ -249,24 +214,24 @@ public class TestFulluntyped {
 
 		e = fact.TmApp(fact.TmVar(0, 2), fact.TmVar(0, 2));
 		assertEquals("b b", e.accept(print).print(ctx.addName("a").addName("b")));
-		assertEquals("a a", termShiftAndSubst.termSubst(0, fact.TmVar(1, 2), e).accept(print).print(ctx.addName("a").addName("b")));
+		assertEquals("a a", deBruijn.termSubst(0, fact.TmVar(1, 2), e).accept(print).print(ctx.addName("a").addName("b")));
 
 		e = fact.TmApp(fact.TmVar(0, 2), fact.TmAbs("x", fact.TmAbs("y", fact.TmVar(2, 4))));
 		// [b -> a] (b \.x\.y b) = a (\.x\.y a)
 		assertEquals("b \\x.\\y.b", e.accept(print).print(ctx.addName("a").addName("b")));
-		assertEquals("a \\x.\\y.a", termShiftAndSubst.termSubst(0, fact.TmVar(1, 2), e).accept(print).print(ctx.addName("a").addName("b")));
+		assertEquals("a \\x.\\y.a", deBruijn.termSubst(0, fact.TmVar(1, 2), e).accept(print).print(ctx.addName("a").addName("b")));
 
 		// [b -> a (\z.a)] (b (\x.b)) = (a (\z.a)) (\x.(a (\z.a)))
 		e = fact.TmApp(fact.TmVar(0, 2), fact.TmAbs("x", fact.TmVar(1, 3)));
 		assertEquals("b \\x.b", e.accept(print).print(ctx.addName("a").addName("b")));
-		assertEquals("a \\z.a \\x.a \\z.a", termShiftAndSubst.termSubst(0, fact.TmApp(fact.TmVar(1, 2), fact.TmAbs("z", fact.TmVar(2, 3))), e).accept(print).print(ctx.addName("a").addName("b")));
+		assertEquals("a \\z.a \\x.a \\z.a", deBruijn.termSubst(0, fact.TmApp(fact.TmVar(1, 2), fact.TmAbs("z", fact.TmVar(2, 3))), e).accept(print).print(ctx.addName("a").addName("b")));
 
 		// [b -> a] (\b. b a) = (\.b b a)
 		assertEquals("\\b.b a", fact.TmAbs("b", fact.TmApp(fact.TmVar(0, 2), fact.TmVar(1, 2))).accept(print).print(ctx.addName("a")));
-		assertEquals("\\b_.b_ a", termShiftAndSubst.termSubst(0, fact.TmVar(1, 2), fact.TmAbs("b", fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))).accept(print).print(ctx.addName("a").addName("b")));
+		assertEquals("\\b_.b_ a", deBruijn.termSubst(0, fact.TmVar(1, 2), fact.TmAbs("b", fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))).accept(print).print(ctx.addName("a").addName("b")));
 
 		// [b -> a] (\a. b a) = (\a_. a a_)
 		assertEquals("\\a.b a", fact.TmAbs("a", fact.TmApp(fact.TmVar(1, 2), fact.TmVar(0, 2))).accept(print).print(ctx.addName("b")));
-		assertEquals("\\a_.a a_", termShiftAndSubst.termSubst(0, fact.TmVar(1, 2), fact.TmAbs("a", fact.TmApp(fact.TmVar(1, 3), fact.TmVar(0, 3)))).accept(print).print(ctx.addName("a").addName("b")));
+		assertEquals("\\a_.a a_", deBruijn.termSubst(0, fact.TmVar(1, 2), fact.TmAbs("a", fact.TmApp(fact.TmVar(1, 3), fact.TmVar(0, 3)))).accept(print).print(ctx.addName("a").addName("b")));
 	}
 }

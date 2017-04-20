@@ -1,13 +1,8 @@
 package untyped;
 
-import library.Zero;
-import untyped.termalg.shared.TermAlgDefault;
+import untyped.termalg.shared.GTermAlg;
 
-public interface IsVal<Term> extends TermAlgDefault<Term, Boolean>, varapp.IsVal<Term> {
-	@Override default Zero<Boolean> m() {
-		return () -> false;
-	}
-
+public interface IsVal<Term> extends GTermAlg<Term, Boolean>, varapp.IsVal<Term> {
 	default Boolean TmAbs(String p1, Term p2) {
 		return true;
 	}

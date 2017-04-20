@@ -1,9 +1,15 @@
 package variant;
 
-import variant.termalg.shared.TermAlgDefault;
+import java.util.List;
 
-public interface IsVal<Term, Ty> extends TermAlgDefault<Term, Ty, Boolean>, typed.IsVal<Term, Ty> {
-	@Override default Boolean TmTag(String x, Term t, Ty ty) {
+import library.Tuple3;
+import variant.termalg.shared.GTermAlg;
+
+public interface IsVal<Term, Ty> extends GTermAlg<Term, Ty, Boolean>, typed.IsVal<Term, Ty> {
+  default Boolean TmTag(String x, Term t, Ty ty) {
 		return visitTerm(t);
 	}
+  default Boolean TmCase(Term p1, List<Tuple3<String, String, Term>> p2) {
+    return false;
+  }
 }

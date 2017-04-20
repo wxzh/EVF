@@ -6,9 +6,6 @@ import fullref.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, bot.Typeof<Term, Ty, Bind>, fullsub.Typeof<Term, Ty, Bind>, variant.Typeof<Term, Ty, Bind> {
-	@Override TyEqv<Ty> tyEqv();
-	@Override JoinMeet<Ty> joinMeet();
-	@Override Subtype<Ty> subtype();
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
 	@Override GTyAlg<Ty, Ty> tyAlg();
 
@@ -17,7 +14,7 @@ public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, B
 	}
 
 	@Override default ITypeof<Ty, Bind> TmLoc(int l) {
-		return ctx -> m().empty().typeof(ctx);
+		return ctx -> typeError("locations are not supposed to occur in source programs!");
 	}
 
 	@Override default ITypeof<Ty, Bind> TmDeref(Term t) {
@@ -25,18 +22,16 @@ public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, B
 				.TyRef(ty -> ty)
 				.TyBot(() -> tyAlg().TyBot())
 				.TySource(ty -> ty)
-				.otherwise(() -> m().empty().typeof(ctx))
+				.otherwise(() -> typeError("argument of ! is not a Ref or Source"))
 				.visitTy(visitTerm(t).typeof(ctx));
 	}
 
 	@Override default ITypeof<Ty, Bind> TmAssign(Term t1, Term t2) {
 		return ctx -> tyMatcher()
-				.TyRef(ty1 -> subtype().subtype(visitTerm(t2).typeof(ctx), ty1) ? tyAlg().TyUnit() : m().empty().typeof(ctx))
-				.TyBot(() -> {
-					visitTerm(t2).typeof(ctx);
-					return tyAlg().TyBot(); })
-				.TySink(ty1 -> subtype().subtype(visitTerm(t2).typeof(ctx), ty1) ? tyAlg().TyUnit() : m().empty().typeof(ctx))
-				.otherwise(() -> m().empty().typeof(ctx))
+				.TyRef(ty1 -> subtype(visitTerm(t2).typeof(ctx), ty1) ? tyAlg().TyUnit() : typeError("arguments of := are incompatible"))
+				.TyBot(() -> { visitTerm(t2).typeof(ctx); return tyAlg().TyBot(); })
+				.TySink(ty1 -> subtype(visitTerm(t2).typeof(ctx), ty1) ? tyAlg().TyUnit() : typeError("arguments of := are incompatible"))
+				.otherwise(() -> typeError("arguments of ! is not a Ref or Sink"))
 				.visitTy(visitTerm(t1).typeof(ctx));
 	}
 }

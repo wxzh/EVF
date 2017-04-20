@@ -1,17 +1,18 @@
 package varapp;
 
+import java.util.Optional;
+
 import varapp.termalg.shared.TermAlgTransform;
 
 public interface ConstFunElim<Term> extends TermAlgTransform<Term> {
-  IsVarUsed<Term> isVarUsed();
-  TermShift<Term> termShift(int d);
-  GetBodyFromTmAbs<Term> getBodyFromTmAbs();
+  boolean isVarUsed(int n, Term t);
+  Term termShift(int d, Term t);
+  Optional<Term> getBodyFromTmAbs(Term t);
 
   default Term TmApp(Term e1, Term e2) {
     Term e = visitTerm(e1);
-    return getBodyFromTmAbs().visitTerm(e)
-        .map(t -> isVarUsed().visitTerm(t).apply(0)
-          ? alg().TmApp(e, visitTerm(e2)) : termShift(-1).visitTerm(t).apply(0))
+    return getBodyFromTmAbs(e)
+        .map(t -> isVarUsed(0, t) ? alg().TmApp(e, visitTerm(e2)) : termShift(-1, t))
         .orElse(alg().TmApp(e, visitTerm(e2)));
   }
 }

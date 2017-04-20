@@ -1,10 +1,10 @@
 package arith;
 
-import arith.termalg.shared.TermAlgDefault;
-import library.Zero;
+import arith.termalg.shared.GTermAlg;
 
-public interface IsVal<Term> extends TermAlgDefault<Term, Boolean>, bool.IsVal<Term>, nat.IsNumericVal<Term> {
-	@Override default Zero<Boolean> m() {
-		return bool.IsVal.super.m();
-	}
+//TODO: Succ(True) is not a val
+public interface IsVal<Term> extends GTermAlg<Term, Boolean>, bool.IsVal<Term>, nat.IsNumericVal<Term> {
+  default Boolean TmIsZero(Term t) {
+    return false;
+  }
 }
