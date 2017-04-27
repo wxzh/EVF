@@ -1,0 +1,14 @@
+file = File.new("syntax.mli", "r")
+while (line = file.gets)
+  
+end
+17:59  up 56 days,  1:44, 8 users, load averages: 10.18 9.74 8.95
+USER     TTY      FROM              LOGIN@  IDLE WHAT
+weixin   console  -                18Jan16 56days -
+weixin   s000     -                 2:13       1 -zsh
+weixin   s001     -                18Jan16     1 vim computePositions.rb
+weixin   s002     -                18Jan16    25 -zsh
+weixin   s003     -                06Mar16 7days -zsh
+weixin   s004     -                Sat17    1:45 -zsh
+weixin   s005     -                 2:25      16 -zsh
+weixin   s006     -                16:24      14 -zsh
