@@ -22,7 +22,8 @@ Three Eclipse projects, `VisitProcessor` and `tapl`, will be imported, which are
 - `tapl` contains the case study on “Types and Programming Languages”.
 - `benchmark` contains the micro-benchmark
 
-If everything is OK, a folder called `generated` will appear after `tapl` is imported. Otherwise, please follow the steps below to manually configure annotation processing in eclipse:
+If everything is OK, a folder called `generated` will be generated under the folder `tapl`.
+If not, please follow the steps below to manually configure annotation processing in eclipse:
 
 1.  Open Properties -> Java Compiler -> Annotation Processing
   - tick "Enable project specific settings"
@@ -38,7 +39,8 @@ If everything is OK, a folder called `generated` will appear after `tapl` is imp
 An Example
 ==========
 
-We are going to model a tiny expression language that supports only literals and additions.
+We are going to model a tiny expression language that supports only literals and additions (full code can be found in `benchmark/pkg/Example.java`).
+
 Inside project `tapl`, create a new package called `pkg`.
 Inside that package, create a file called `Alg.java` that contains the following code:
 
@@ -98,7 +100,7 @@ class DoubleImpl implements Double<Exp>, AlgVisitor<Exp> {
   }
 }
 ```
-We instantiate the type parameter using the generated AST type of the same and mixin in an `AlgVisitor` for giving an implementation of `visitExp`.
+We instantiate the type parameter using the generated AST type of the same name and mixin in an `AlgVisitor` for giving an implementation of `visitExp`.
 For `Double`, we additionally need the generated factory class for fulfilling the dependency.
 
 Here is some client code illustrating how to use what we have defined:
@@ -120,6 +122,8 @@ For more examples, please have a look on the paper and files under `tapl` such a
 
 Case Study
 ===
+
+To run the scripts, you need [ruby](https://www.ruby-lang.org/en/downloads/) and [cloc](https://github.com/AlDanial/cloc).
 
 Run `ruby casestudy.rb` for collecting SLOC statistics (Table 1 & 2)
 
