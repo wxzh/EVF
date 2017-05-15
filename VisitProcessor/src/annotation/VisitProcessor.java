@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.joining;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -43,10 +42,7 @@ public class VisitProcessor extends AbstractProcessor {
     private static final String TAB4 = "\t\t\t\t";
 
     private Filer filer;
-    private String folder;
-    private String toPackage;
     private ClassInfo self;
-    private boolean internal;
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -61,7 +57,7 @@ public class VisitProcessor extends AbstractProcessor {
             for (TypeElement element : ElementFilter.typesIn(internalAnnotated)) {
                 self = new ClassInfo(element);
                 genShared();
-                genInternal();
+//                genInternal();
                 genExternal();
             }
         } catch (IOException e) {
@@ -70,14 +66,15 @@ public class VisitProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void setFolderAndPackage(String name) {
-        String[] elements = { self.packageName, self.name.toLowerCase(), name };
-        folder = String.join("/", elements);
-        toPackage = String.join(".", elements);
-    }
+//    private void setFolderAndPackage(String name) {
+////        String[] elements = { self.packageName, self.name.toLowerCase(), name };
+////        folder = String.join("/", elements);
+////        toPackage = String.join(".", elements);
+//        folder = self.packageName;
+//        toPackage = self.packageName;
+//    }
 
     private void genShared() throws IOException {
-        setFolderAndPackage("shared");
         genGeneralizedAlg();
         genAlgDefaultInterface();
         genAlgQueryInterface();
@@ -93,7 +90,7 @@ public class VisitProcessor extends AbstractProcessor {
         String tvarString = printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O + t));
 
         content += "public interface " + generalizedName(self) + tvarString;
-        content += self.mapParents(" extends ", parent -> nameInShared(parent, generalizedName(parent))
+        content += self.mapParents(" extends ", parent -> qualifiedName(parent, generalizedName(parent))
                 + printTvars(parent.joinTvarsAndLhsTvars(t -> t, t -> O + t)));
         content += " {\n";
         content += self.joinMethodsWithNewline(
@@ -110,38 +107,21 @@ public class VisitProcessor extends AbstractProcessor {
         String content = declarePackage();
         content += "public interface " + name;
 
-        if (internal) {
-            content += printTvars(self.joinTvars(t -> O + t)) + " extends " + nameInShared(self, generalizedName(self))
-                    + printTvars(self.joinTvarsAndLhsTvars(t -> O + t, t -> O + t));
-        } else {
-            content += printTvars(self.joinTvars(t -> self.lhsTvars.contains(t) ? O + t : t)) + " extends "
-                    + nameInShared(self, generalizedName(self))
-                    + printTvars(self.joinTvarsAndLhsTvars(this::thisLhsTvarWithElement, t -> O + t));
-        }
-        content += " {\n";
+        content += printTvars(self.joinTvars(t -> self.lhsTvars.contains(t) ? O + t : t)) + " extends "
+                + qualifiedName(self, generalizedName(self))
+                + printTvars(self.joinTvarsAndLhsTvars(this::thisLhsTvarWithElement, t -> O + t))
+                + " {\n";
         for (String tvar : self.lhsTvars) {
-            content += TAB + "default " + O + tvar + " visit" + tvar + "("
-                    + (internal ? O + tvar : thisLhsTvarWithElement(tvar)) + " e) {\n";
-            content += TAB2 + "return e";
-            if (!internal)
-                content += ".accept(this)";
-            content += ";\n";
-            content += TAB + "}\n";
+            content += TAB + "default " + O + tvar + " visit" + tvar + "(" + thisLhsTvarWithElement(tvar) + " e) {\n"
+                    +  TAB2 + "return e.accept(this);\n"
+                    +  TAB + "}\n";
         }
         content += "}\n";
 
         write(name, content);
     }
 
-    private void genInternal() throws IOException {
-        setFolderAndPackage("internal");
-        internal = true;
-        genCommon();
-    }
-
     private void genExternal() throws IOException {
-        setFolderAndPackage("external");
-        internal = false;
         genCommon();
         genPatternMatching();
     }
@@ -167,8 +147,8 @@ public class VisitProcessor extends AbstractProcessor {
         String tvarString = printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O));
 
         content += "public interface " + name + printTvars(self.joinTvars(), O) + " extends "
-                + nameInShared(self, generalizedName(self)) + tvarString;
-        content += self.mapParents(", ", parent -> nameInShared(parent) + DEFAULT + printTvars(parent.joinTvars(), O));
+                + qualifiedName(self, generalizedName(self)) + tvarString;
+        content += self.mapParents(", ", parent -> qualifiedName(parent) + DEFAULT + printTvars(parent.joinTvars(), O));
         content += " {\n";
         if (!self.hasParent())
             content += TAB + "library.Zero<" + O + "> m();\n\n";
@@ -184,8 +164,8 @@ public class VisitProcessor extends AbstractProcessor {
         String tvarString = printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> t));
 
         content += "public interface " + name + printTvars(self.joinTvars()) + " extends "
-                + nameInShared(self, generalizedName(self)) + tvarString;
-        content += self.mapParents(", ", parent -> nameInShared(parent) + TRANSFORM + printTvars(parent.joinTvars()));
+                + qualifiedName(self, generalizedName(self)) + tvarString;
+        content += self.mapParents(", ", parent -> qualifiedName(parent) + TRANSFORM + printTvars(parent.joinTvars()));
         content += " {\n";
         content += factoryDependency() + "\n";
         content += self.joinMethodsWithNewline(method -> TAB + "default " + method.returnType + " " + method + " {\n"
@@ -207,9 +187,9 @@ public class VisitProcessor extends AbstractProcessor {
         String tvarString = printTvars(self.joinTvarsAndLhsTvars(t -> t, toFun));
 
         content += "public interface " + name + printTvars(O, self.joinTvars()) + " extends "
-                + nameInShared(self, generalizedName(self)) + tvarString;
+                + qualifiedName(self, generalizedName(self)) + tvarString;
         content += self.mapParents(", ",
-                parent -> nameInShared(parent, parent.name) + TRANSFORM + "WithCtx" + printTvars(O, parent.joinTvars()));
+                parent -> qualifiedName(parent, parent.name) + TRANSFORM + "WithCtx" + printTvars(O, parent.joinTvars()));
         content += " {\n";
         content += factoryDependency() + "\n";
         content += self.joinMethodsWithNewline(method -> TAB + "default " + method.substReturnType(toFun) + " " + method
@@ -245,11 +225,7 @@ public class VisitProcessor extends AbstractProcessor {
 
         // override accept method
         content += TAB3 + "public " + tvarString + " " + O + tvar + " accept(" + getVisitorType() + " v) {\n";
-        content += TAB4 + "return v." + method.name + "("
-                + (internal
-                        ? method.mapArgs(self.lhsTvars::contains, (type, arg) -> arg + ".accept(v)", ", ")
-                        : method.mapTypeArgThenJoinWithComma((type, arg) -> arg))
-                + ");\n";
+        content += TAB4 + "return v." + method.name + "(" + method.mapTypeArgThenJoinWithComma((type, arg) -> arg) + ");\n";
         content += TAB3 + "}\n";
         content += TAB2 + "};\n";
         content += TAB + "}\n";
@@ -261,11 +237,11 @@ public class VisitProcessor extends AbstractProcessor {
         String content = declarePackage();
         String tvarString = printTvars(self.joinRhsTvars(t -> t));
         String returnType = printTvars(self.joinLhsTvars(t -> O + t));
-        content += "public interface " + tvar + tvarString + " {\n";
+        content += "public interface " + "C" + tvar + tvarString + " {\n";
         content += TAB + returnType + " " + O + tvar + " accept(" + getVisitorType() + " v);\n";
         content += "}\n";
 
-        write(tvar, content);
+        write("C"+tvar, content);
     }
 
     private void genAlgMapperInterface() throws IOException {
@@ -275,7 +251,7 @@ public class VisitProcessor extends AbstractProcessor {
 
         content += "public interface " + name + tvarString;
         content += self.mapParents(" extends ",
-                parent -> nameInExternal(parent) + MAPPER + printTvars(parent.joinUsedTvars(t -> I + t), O));
+                parent -> qualifiedName(parent) + MAPPER + printTvars(parent.joinUsedTvars(t -> I + t), O));
         content += " {\n";
         content += self.joinMethodsWithNewline(method -> TAB
                 + method.substTypes(self.tvars::contains, t -> I + t).currying(O) + " " + method.name + MAPPER + "();");
@@ -302,7 +278,7 @@ public class VisitProcessor extends AbstractProcessor {
                 + " " + method.name + "(" + getMapperTvarString(method) + " " + method.name + ") {\n" + TAB2 + "this."
                 + method.name + " = " + method.name + ";\n" + TAB2 + "return this;\n" + TAB + "}\n");
         // otherwise
-        content += TAB + "public " + nameInShared(self, generalizedName(self))
+        content += TAB + "public " + qualifiedName(self, generalizedName(self))
                 + printTvars(self.joinTvarsAndLhsTvars(this::thisLhsTvarWithElement, t -> O))
                 + " otherwise(java.util.function.Supplier" + _O_ + " otherwise) {\n";
         content += self
@@ -327,9 +303,9 @@ public class VisitProcessor extends AbstractProcessor {
     private void genAlgApplierInterface() throws IOException {
         String content = declarePackage();
         content += "public interface " + thisWith(APPLIER) + printTvars(self.joinTvars(t -> I + t), O) + " extends "
-                + nameInShared(self, generalizedName(self)) + printTvars(self.joinTvarsAndLhsTvars(t -> I + t, t -> O));
+                + qualifiedName(self, generalizedName(self)) + printTvars(self.joinTvarsAndLhsTvars(t -> I + t, t -> O));
         content += self.mapParents(", ",
-                parent -> nameInExternal(parent) + APPLIER + printTvars(parent.joinTvars(t -> I + t), O));
+                parent -> qualifiedName(parent) + APPLIER + printTvars(parent.joinTvars(t -> I + t), O));
         content += " {\n";
         content += TAB + thisWith(MAPPER) + printTvars(self.joinUsedTvars(t -> I + t), O) + " mapper();\n\n";
         content += self
@@ -362,12 +338,12 @@ public class VisitProcessor extends AbstractProcessor {
         content += "public interface " + thisWith(MATCHER) + tvarString + " extends " + thisWith(MAPPER)
                 + printTvars(self.joinUsedTvars(t -> I + t), O);
         content += self.mapParents(", ",
-                parent -> nameInExternal(parent) + MATCHER + printTvars(parent.joinTvars(t -> I + t), O));
+                parent -> qualifiedName(parent) + MATCHER + printTvars(parent.joinTvars(t -> I + t), O));
         content += " {\n";
         content += self.joinAllMethodsWithNewline(method -> TAB + thisWith(MATCHER) + tvarString + " " + method.name
                 + "(" + method.substTypes(self.tvars::contains, t -> I + t).currying(O) + " " + method.name + ");");
         content += "\n";
-        content += TAB + nameInShared(self, generalizedName(self))
+        content += TAB + qualifiedName(self, generalizedName(self))
                 + printTvars(self.joinTvarsAndLhsTvars(t -> I + t, t -> O)) + " otherwise(java.util.function.Supplier"
                 + _O_ + " Otherwise);\n";
         content += "}\n";
@@ -380,9 +356,9 @@ public class VisitProcessor extends AbstractProcessor {
         String content = declarePackage();
 
         content += "public interface " + name + printTvars(self.joinTvars(), O) + " extends "
-                + nameInShared(self, generalizedName(self)) + printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O));
+                + qualifiedName(self, generalizedName(self)) + printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O));
         content += self.mapParents(", ",
-                parent -> nameInShared(parent) + QUERY + printTvars(parent.joinTvars(), O));
+                parent -> qualifiedName(parent) + QUERY + printTvars(parent.joinTvars(), O));
         content += " {\n";
         if (!self.hasParent())
             content += TAB + "library.Monoid<" + O + "> m();\n\n";
@@ -399,9 +375,9 @@ public class VisitProcessor extends AbstractProcessor {
         String tvarString = printTvars(self.joinTvarsAndLhsTvars(t -> t, toFun));
 
         content += "public interface " + name + printTvars(I, O, self.joinTvars()) + " extends "
-                + nameInShared(self, generalizedName(self)) + tvarString;
+                + qualifiedName(self, generalizedName(self)) + tvarString;
         content += self.mapParents(", ",
-                parent -> nameInShared(parent, parent.name) + QUERY + "WithCtx" + printTvars(I, O, parent.joinTvars()));
+                parent -> qualifiedName(parent, parent.name) + QUERY + "WithCtx" + printTvars(I, O, parent.joinTvars()));
         content += " {\n";
         if (!self.hasParent())
             content += TAB + "library.Monoid<" + O + "> m();\n\n";
@@ -415,9 +391,9 @@ public class VisitProcessor extends AbstractProcessor {
         String name = "G_" + thisWith(QUERY);
         String tvarString = printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O + t));
         String content = declarePackage();
-        content += "public interface " + name + tvarString + " extends " + nameInShared(self, generalizedName(self))
+        content += "public interface " + name + tvarString + " extends " + qualifiedName(self, generalizedName(self))
                 + tvarString;
-        content += self.mapParents(", ", parent -> nameInShared(parent, "G_" + parent.name + QUERY)
+        content += self.mapParents(", ", parent -> qualifiedName(parent, "G_" + parent.name + QUERY)
                 + printTvars(parent.joinTvarsAndLhsTvars(t -> t, t -> O + t)));
         content += " {\n";
         content += self.joinNewLhsTvars(tvar -> TAB + "library.Monoid<" + O + tvar + "> m" + tvar + "();");
@@ -433,7 +409,7 @@ public class VisitProcessor extends AbstractProcessor {
 
     // utility functions
     private String declarePackage() {
-        return "package " + toPackage + ";\n\n";
+        return "package " + self.packageName + ";\n\n";
     }
 
     private String thisWith(String name) {
@@ -441,11 +417,11 @@ public class VisitProcessor extends AbstractProcessor {
     }
 
     private String thisLhsTvarWithElement(String tvar) {
-        return self.lhsTvars.contains(tvar) ? tvar + printTvars(self.joinRhsTvars()) : tvar;
+        return self.lhsTvars.contains(tvar) ? "C" + tvar + printTvars(self.joinRhsTvars()) : tvar;
     }
 
     private void write(String name, String content) throws IOException {
-        String filePath = folder + "/" + name;
+        String filePath = self.packageName + "/" + name;
         File f = new File(filePath);
         if (!f.exists()) {
             JavaFileObject file = filer.createSourceFile(filePath);
@@ -470,19 +446,11 @@ public class VisitProcessor extends AbstractProcessor {
         return "G" + c.name;
     }
 
-    private String nameInExternal(ClassInfo c) {
-        return nameIn(c, "external", c.name);
+    private String qualifiedName(ClassInfo c) {
+      return qualifiedName(c, c.name);
     }
 
-    private String nameInShared(ClassInfo c) {
-        return nameIn(c, "shared", c.name);
-    }
-
-    private String nameInShared(ClassInfo c, String name) {
-        return nameIn(c, "shared", name);
-    }
-
-    private String nameIn(ClassInfo c, String folder, String name) {
-        return String.join(".", Arrays.asList(c.packageName, c.name.toLowerCase(), folder, name));
+    private String qualifiedName(ClassInfo c, String name) {
+      return c.packageName + "." + name;
     }
 }
