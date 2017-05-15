@@ -7,7 +7,6 @@ import library.Tuple2;
 import library.Tuple3;
 import utils.Context;
 import utils.IPrint;
-import variant.termalg.shared.GTermAlg;
 
 public interface Print<Term, Ty, Bind> extends GTermAlg<Term, Ty, IPrint<Bind>> {
 	String printTy(Ty ty, Context<Bind> ctx);

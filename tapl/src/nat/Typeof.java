@@ -1,7 +1,5 @@
 package nat;
 
-import nat.termalg.shared.GTermAlg;
-import nat.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {

@@ -3,10 +3,8 @@ package variant;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import fullsimple.tyalg.shared.GTyAlg;
 import library.Tuple2;
 import utils.ITyEqv;
-import variant.tyalg.external.TyAlgMatcher;
 
 public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>> {
 	TyAlgMatcher<Ty, Boolean> matcher();

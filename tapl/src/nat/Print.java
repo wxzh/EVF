@@ -1,7 +1,5 @@
 package nat;
 
-import nat.termalg.external.TermAlgMatcher;
-import nat.termalg.shared.GTermAlg;
 import utils.Context;
 import utils.IPrint;
 

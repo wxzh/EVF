@@ -3,7 +3,6 @@ package record;
 import java.util.List;
 
 import library.Tuple2;
-import record.termalg.shared.GTermAlg;
 
 public interface IsVal<Term> extends GTermAlg<Term, Boolean> {
 	default Boolean TmRecord(List<Tuple2<String, Term>> fields) {

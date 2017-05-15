@@ -1,8 +1,6 @@
 package top;
 
 import library.Zero;
-import top.tyalg.external.TyAlgMatcher;
-import top.tyalg.shared.TyAlgDefault;
 import utils.IJoin;
 import utils.IMeet;
 

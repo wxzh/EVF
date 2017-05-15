@@ -1,7 +1,5 @@
 package fullerror;
 
-import fullerror.termalg.shared.GTermAlg;
-import fullerror.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, simplebool.Typeof<Term, Ty, Bind>, bot.Typeof<Term, Ty, Bind> {

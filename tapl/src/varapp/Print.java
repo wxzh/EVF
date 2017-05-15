@@ -2,7 +2,6 @@ package varapp;
 
 import utils.Context;
 import utils.IPrint;
-import varapp.termalg.shared.GTermAlg;
 
 public interface Print<Term, Bind> extends GTermAlg<Term, IPrint<Bind>> {
 	String printBind(Bind bind, Context<Bind> ctx);

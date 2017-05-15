@@ -1,8 +1,5 @@
 package bool;
 
-import bool.termalg.external.TermAlgMatcher;
-import bool.termalg.shared.GTermAlg;
-
 public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
 	TermAlg<Term> alg();
 	TermAlgMatcher<Term, Term> matcher();

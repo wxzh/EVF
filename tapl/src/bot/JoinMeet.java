@@ -1,7 +1,5 @@
 package bot;
 
-import bot.tyalg.external.TyAlgMatcher;
-import bot.tyalg.shared.TyAlgDefault;
 import library.Zero;
 import utils.IJoin;
 import utils.IMeet;

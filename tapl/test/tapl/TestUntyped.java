@@ -6,62 +6,62 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import untyped.CTerm;
 import untyped.Eval1;
 import untyped.IsVal;
 import untyped.Print;
 import untyped.TermAlg;
+import untyped.TermAlgFactory;
+import untyped.TermAlgMatcher;
+import untyped.TermAlgMatcherImpl;
+import untyped.TermAlgVisitor;
 import untyped.TmMap;
-import untyped.termalg.external.Term;
-import untyped.termalg.external.TermAlgFactory;
-import untyped.termalg.external.TermAlgMatcher;
-import untyped.termalg.external.TermAlgMatcherImpl;
-import untyped.termalg.external.TermAlgVisitor;
+import utils.BindingAlgFactory;
+import utils.BindingAlgVisitor;
+import utils.CBind;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
 import utils.PrintBind;
 import utils.TmMapCtx;
-import utils.bindingalg.external.Bind;
-import utils.bindingalg.external.BindingAlgFactory;
-import utils.bindingalg.external.BindingAlgVisitor;
 
 public class TestUntyped {
-	class PrintImpl implements Print<Term, Bind>, TermAlgVisitor<IPrint<Bind>> {
-		@Override public String printBind(Bind bind, Context<Bind> ctx) {
+	class PrintImpl implements Print<CTerm, CBind>, TermAlgVisitor<IPrint<CBind>> {
+		@Override public String printBind(CBind bind, Context<CBind> ctx) {
 		  return new PrintBindImpl().visitBind(bind).print(ctx);
 		}
 	}
 
-	class PrintBindImpl implements PrintBind<Bind>, BindingAlgVisitor<IPrint<Bind>> {}
+	class PrintBindImpl implements PrintBind<CBind>, BindingAlgVisitor<IPrint<CBind>> {}
 
-	class IsValImpl implements IsVal<Term>, TermAlgVisitor<Boolean> {}
+	class IsValImpl implements IsVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-  class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
-    @Override public TermAlg<Term> alg() {
+  class TmMapImpl implements TmMap<CTerm>, TermAlgVisitor<Function<TmMapCtx<CTerm>, CTerm>> {
+    @Override public TermAlg<CTerm> alg() {
       return fact;
     }
   }
 
-	class Eval1Impl implements Eval1<Term>, TermAlgVisitor<Term> {
-	  @Override public Term termSubstTop(Term s, Term t) {
+	class Eval1Impl implements Eval1<CTerm>, TermAlgVisitor<CTerm> {
+	  @Override public CTerm termSubstTop(CTerm s, CTerm t) {
 	    return deBruijn.termSubstTop(s, t);
 	  }
-		@Override public boolean isVal(Term e) {
+		@Override public boolean isVal(CTerm e) {
 			return isVal.visitTerm(e);
 		}
-		@Override public TermAlg<Term> alg() {
+		@Override public TermAlg<CTerm> alg() {
 			return fact;
 		}
-		@Override public TermAlgMatcher<Term, Term> matcher() {
+		@Override public TermAlgMatcher<CTerm, CTerm> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 	}
 
-	class EvalImpl implements Eval<Term> {
-		@Override public boolean isVal(Term t) {
+	class EvalImpl implements Eval<CTerm> {
+		@Override public boolean isVal(CTerm t) {
 			return t.accept(isVal);
 		}
-		@Override public Term eval1(Term t) {
+		@Override public CTerm eval1(CTerm t) {
 		  return new Eval1Impl().visitTerm(t);
 		}
 	}
@@ -69,16 +69,16 @@ public class TestUntyped {
 	TmMapImpl deBruijn = new TmMapImpl();
 	TermAlgFactory fact = new TermAlgFactory();
 	BindingAlgFactory bindFact = new BindingAlgFactory();
-	Context<Bind> ctx = new Context<>(new BindingAlgFactory());
+	Context<CBind> ctx = new Context<>(new BindingAlgFactory());
 	PrintImpl print = new PrintImpl();
 	PrintBindImpl printBind = new PrintBindImpl();
 	IsValImpl isVal = new IsValImpl();
 	EvalImpl eval = new EvalImpl();
 
-	Term x = fact.TmVar(0, 1);
-	Term id = fact.TmAbs("x", x);
-	Term lam_x_xx = fact.TmAbs("x", fact.TmApp(x, x));
-	Term id_lam_x_xx = fact.TmApp(id, fact.TmAbs("x", fact.TmApp(x, x)));
+	CTerm x = fact.TmVar(0, 1);
+	CTerm id = fact.TmAbs("x", x);
+	CTerm lam_x_xx = fact.TmAbs("x", fact.TmApp(x, x));
+	CTerm id_lam_x_xx = fact.TmApp(id, fact.TmAbs("x", fact.TmApp(x, x)));
 
 	@Test
 	public void testPrint() {
@@ -102,14 +102,14 @@ public class TestUntyped {
 	@Test
 	public void testShift() {
 		// (\.\.1 (0 2)) -> (\.\.1 (0 4))
-		Term e = fact.TmAbs("x", fact.TmAbs("y", fact.TmApp(fact.TmVar(1, 3), fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))));
+		CTerm e = fact.TmAbs("x", fact.TmAbs("y", fact.TmApp(fact.TmVar(1, 3), fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))));
 		assertEquals("\\x.\\y.[bad index: 1/5 in {(y,), (x,)}] [bad index: 0/5 in {(y,), (x,)}] [bad index: 4/5 in {(y,), (x,)}]", deBruijn.termShift(2, e).accept(print).print(ctx));
 	}
 
 	// Exercise 6.2.5
 	@Test
 	public void testTermSubst() {
-		Term e;
+		CTerm e;
 
 		e = fact.TmApp(fact.TmVar(0, 2), fact.TmVar(0, 2));
 		assertEquals("b b", e.accept(print).print(ctx.addName("a").addName("b")));

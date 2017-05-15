@@ -1,6 +1,5 @@
 package extension;
 
-import extension.termalg.shared.GTermAlg;
 import utils.IPrint;
 
 public interface Print<Term, Bind> extends GTermAlg<Term, IPrint<Bind>>,

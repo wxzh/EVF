@@ -1,6 +1,5 @@
 package fullerror;
 
-import fullerror.termalg.shared.GTermAlg;
 import utils.IPrint;
 
 public interface Print<Term, Ty, Bind> extends GTermAlg<Term, Ty, IPrint<Bind>>, simplebool.Print<Term, Ty, Bind> {

@@ -1,8 +1,5 @@
 package fulluntyped;
 
-import fulluntyped.bindingalg.external.BindingAlgMatcher;
-import fulluntyped.termalg.external.TermAlgMatcher;
-import fulluntyped.termalg.shared.GTermAlg;
 import utils.Context;
 
 public interface Eval1<Term, Bind> extends GTermAlg<Term, Term>, untyped.Eval1<Term>, extension.Eval1<Term, Bind> {

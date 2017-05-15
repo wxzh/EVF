@@ -2,7 +2,6 @@ package untyped;
 
 import java.util.function.Function;
 
-import untyped.termalg.shared.TermAlgTransformWithCtx;
 import utils.TmMapCtx;
 
 public interface TmMap<Term> extends TermAlgTransformWithCtx<TmMapCtx<Term>, Term>, varapp.TmMap<Term> {

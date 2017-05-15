@@ -1,8 +1,5 @@
 package moreextension;
 
-import moreextension.termalg.external.TermAlgMatcher;
-import moreextension.termalg.shared.GTermAlg;
-
 public interface Eval1<Term, Ty, Bind> extends GTermAlg<Term, Ty, Term>, extension.Eval1<Term, Bind> {
 	@Override TermAlgMatcher<Term, Ty, Term> matcher();
 	@Override TermAlg<Term, Ty> alg();

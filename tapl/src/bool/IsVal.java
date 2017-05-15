@@ -1,7 +1,5 @@
 package bool;
 
-import bool.termalg.shared.GTermAlg;
-
 public interface IsVal<Term> extends GTermAlg<Term, Boolean> {
 	default Boolean TmTrue() {
 		return true;

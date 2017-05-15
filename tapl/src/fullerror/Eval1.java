@@ -1,8 +1,5 @@
 package fullerror;
 
-import fullerror.termalg.external.TermAlgMatcher;
-import fullerror.termalg.shared.GTermAlg;
-
 public interface Eval1<Term, Ty> extends GTermAlg<Term, Ty, Term>, simplebool.Eval1<Term, Ty> {
 	@Override TermAlgMatcher<Term, Ty, Term> matcher();
 	@Override TermAlg<Term, Ty> alg();

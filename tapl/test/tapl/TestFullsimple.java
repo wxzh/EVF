@@ -11,6 +11,11 @@ import java.util.function.Function;
 import org.junit.Test;
 
 import fullsimple.BindingAlg;
+import fullsimple.BindingAlgFactory;
+import fullsimple.BindingAlgVisitor;
+import fullsimple.CBind;
+import fullsimple.CTerm;
+import fullsimple.CTy;
 import fullsimple.Eval1;
 import fullsimple.GetTypeFromBind;
 import fullsimple.IsNumericVal;
@@ -19,23 +24,18 @@ import fullsimple.Print;
 import fullsimple.PrintBind;
 import fullsimple.PrintTy;
 import fullsimple.TermAlg;
+import fullsimple.TermAlgFactory;
+import fullsimple.TermAlgMatcher;
+import fullsimple.TermAlgMatcherImpl;
+import fullsimple.TermAlgVisitor;
 import fullsimple.TmMap;
 import fullsimple.TyAlg;
+import fullsimple.TyAlgFactory;
+import fullsimple.TyAlgMatcher;
+import fullsimple.TyAlgMatcherImpl;
+import fullsimple.TyAlgVisitor;
 import fullsimple.TyEqv;
 import fullsimple.Typeof;
-import fullsimple.bindingalg.external.Bind;
-import fullsimple.bindingalg.external.BindingAlgFactory;
-import fullsimple.bindingalg.external.BindingAlgVisitor;
-import fullsimple.termalg.external.Term;
-import fullsimple.termalg.external.TermAlgFactory;
-import fullsimple.termalg.external.TermAlgMatcher;
-import fullsimple.termalg.external.TermAlgMatcherImpl;
-import fullsimple.termalg.external.TermAlgVisitor;
-import fullsimple.tyalg.external.Ty;
-import fullsimple.tyalg.external.TyAlgFactory;
-import fullsimple.tyalg.external.TyAlgMatcher;
-import fullsimple.tyalg.external.TyAlgMatcherImpl;
-import fullsimple.tyalg.external.TyAlgVisitor;
 import library.Tuple2;
 import library.Tuple3;
 import utils.Context;
@@ -46,89 +46,89 @@ import utils.ITypeof;
 import utils.TmMapCtx;
 
 public class TestFullsimple {
-  class PrintAll implements Print<Term<Ty>, Ty, Bind<Term<Ty>, Ty>>, TermAlgVisitor<IPrint<Bind<Term<Ty>, Ty>>, Ty>,
-      PrintTy<Ty, Bind<Term<Ty>, Ty>>, TyAlgVisitor<IPrint<Bind<Term<Ty>, Ty>>>,
-      PrintBind<Bind<Term<Ty>, Ty>, Term<Ty>, Ty>, BindingAlgVisitor<IPrint<Bind<Term<Ty>, Ty>>, Term<Ty>, Ty> {
-    public String printBind(Bind<Term<Ty>, Ty> bind, Context<Bind<Term<Ty>, Ty>> ctx) {
+  class PrintAll implements Print<CTerm<CTy>, CTy, CBind<CTerm<CTy>, CTy>>, TermAlgVisitor<IPrint<CBind<CTerm<CTy>, CTy>>, CTy>,
+      PrintTy<CTy, CBind<CTerm<CTy>, CTy>>, TyAlgVisitor<IPrint<CBind<CTerm<CTy>, CTy>>>,
+      PrintBind<CBind<CTerm<CTy>, CTy>, CTerm<CTy>, CTy>, BindingAlgVisitor<IPrint<CBind<CTerm<CTy>, CTy>>, CTerm<CTy>, CTy> {
+    public String printBind(CBind<CTerm<CTy>, CTy> bind, Context<CBind<CTerm<CTy>, CTy>> ctx) {
       return visitBind(bind).print(ctx);
     }
-		public String printTy(Ty ty, Context<Bind<Term<Ty>, Ty>> ctx) {
+		public String printTy(CTy ty, Context<CBind<CTerm<CTy>, CTy>> ctx) {
 			return visitTy(ty).print(ctx);
 		}
-		public TermAlgMatcher<Term<Ty>, Ty, String> matcher() {
+		public TermAlgMatcher<CTerm<CTy>, CTy, String> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
-	  public String printTerm(Term<Ty> t, Context<Bind<Term<Ty>, Ty>> ctx) {
+	  public String printTerm(CTerm<CTy> t, Context<CBind<CTerm<CTy>, CTy>> ctx) {
 	    return visitTerm(t).print(ctx);
 	  }
 	}
 
-	class GetTypeFromBindImpl implements GetTypeFromBind<Bind<Term<Ty>, Ty>, Term<Ty>, Ty>, BindingAlgVisitor<Ty, Term<Ty>, Ty> {}
+	class GetTypeFromBindImpl implements GetTypeFromBind<CBind<CTerm<CTy>, CTy>, CTerm<CTy>, CTy>, BindingAlgVisitor<CTy, CTerm<CTy>, CTy> {}
 
-	class TyEqvImpl implements TyEqv<Ty>, TyAlgVisitor<ITyEqv<Ty>> {
+	class TyEqvImpl implements TyEqv<CTy>, TyAlgVisitor<ITyEqv<CTy>> {
 		@Override
-		public TyAlgMatcher<Ty, Boolean> matcher() {
+		public TyAlgMatcher<CTy, Boolean> matcher() {
 			return new TyAlgMatcherImpl<>();
 		}
 	}
 
-	class TypeofImpl implements Typeof<Term<Ty>, Ty, Bind<Term<Ty>, Ty>>,
-			TermAlgVisitor<ITypeof<Ty, Bind<Term<Ty>, Ty>>, Ty> {
+	class TypeofImpl implements Typeof<CTerm<CTy>, CTy, CBind<CTerm<CTy>, CTy>>,
+			TermAlgVisitor<ITypeof<CTy, CBind<CTerm<CTy>, CTy>>, CTy> {
 	  @Override
-	  public Ty getTypeFromBind(Bind<Term<Ty>, Ty> bind) {
+	  public CTy getTypeFromBind(CBind<CTerm<CTy>, CTy> bind) {
 			return new GetTypeFromBindImpl().visitBind(bind);
 	  }
 
 		@Override
-		public boolean tyEqv(Ty ty1, Ty ty2) {
+		public boolean tyEqv(CTy ty1, CTy ty2) {
 			return new TyEqvImpl().visitTy(ty1).tyEqv(ty2);
 		}
 
 		@Override
-		public TyAlgMatcher<Ty, Ty> tyMatcher() {
+		public TyAlgMatcher<CTy, CTy> tyMatcher() {
 			return new TyAlgMatcherImpl<>();
 		}
 
 		@Override
-		public TyAlg<Ty> tyAlg() {
+		public TyAlg<CTy> tyAlg() {
 			return tyFact;
 		}
 
 		@Override
-		public BindingAlg<Bind<Term<Ty>, Ty>, Term<Ty>, Ty> bindAlg() {
+		public BindingAlg<CBind<CTerm<CTy>, CTy>, CTerm<CTy>, CTy> bindAlg() {
 			return bindFact;
 		}
 	}
 
-	class Eval1Impl implements Eval1<Term<Ty>, Ty, Bind<Term<Ty>,Ty>>, TermAlgVisitor<Term<Ty>, Ty> {
-	  public boolean isNumericVal(Term<Ty> t) {
+	class Eval1Impl implements Eval1<CTerm<CTy>, CTy, CBind<CTerm<CTy>,CTy>>, TermAlgVisitor<CTerm<CTy>, CTy> {
+	  public boolean isNumericVal(CTerm<CTy> t) {
 	    return new IsNumericValImpl().visitTerm(t);
 	  }
-	  public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
+	  public TermAlgMatcher<CTerm<CTy>, CTy, CTerm<CTy>> matcher() {
 	    return new TermAlgMatcherImpl<>();
 	  }
-	  public TermAlg<Term<Ty>, Ty> alg() {
+	  public TermAlg<CTerm<CTy>, CTy> alg() {
 	    return tmFact;
 	  }
-	  public Term<Ty> termSubstTop(Term<Ty> s, Term<Ty> t) {
+	  public CTerm<CTy> termSubstTop(CTerm<CTy> s, CTerm<CTy> t) {
 	    return new TmMapImpl().termSubstTop(s, t);
 	  }
-	  public boolean isVal(Term<Ty> t) {
+	  public boolean isVal(CTerm<CTy> t) {
 	    return new IsValImpl().visitTerm(t);
 	  }
 	}
-	class EvalImpl implements Eval<Term<Ty>> {
-	  public Term<Ty> eval1(Term<Ty> t) {
+	class EvalImpl implements Eval<CTerm<CTy>> {
+	  public CTerm<CTy> eval1(CTerm<CTy> t) {
 	    return new Eval1Impl().visitTerm(t);
 	  }
-	  public boolean isVal(Term<Ty> t) {
+	  public boolean isVal(CTerm<CTy> t) {
 	    return new IsValImpl().visitTerm(t);
 	  }
 	}
-	class IsNumericValImpl implements IsNumericVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
-	class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
-	class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-	  public TermAlg<Term<Ty>, Ty> alg() {
+	class IsNumericValImpl implements IsNumericVal<CTerm<CTy>, CTy>, TermAlgVisitor<Boolean, CTy> {}
+	class IsValImpl implements IsVal<CTerm<CTy>, CTy>, TermAlgVisitor<Boolean, CTy> {}
+	class TmMapImpl implements TmMap<CTerm<CTy>, CTy>, TermAlgVisitor<Function<TmMapCtx<CTerm<CTy>>,CTerm<CTy>>, CTy> {
+	  public TermAlg<CTerm<CTy>, CTy> alg() {
 	    return tmFact;
 	  }
 	}
@@ -137,30 +137,30 @@ public class TestFullsimple {
 	PrintAll print = new PrintAll();
 
 	// elements
-	Ty ty;
-	Bind<Term<Ty>, Ty> bind;
-	Term<Ty> term;
+	CTy ty;
+	CBind<CTerm<CTy>, CTy> bind;
+	CTerm<CTy> term;
 
 	// factories
-	TermAlgFactory<Ty> tmFact = new TermAlgFactory<>();
+	TermAlgFactory<CTy> tmFact = new TermAlgFactory<>();
 	TyAlgFactory tyFact = new TyAlgFactory();
-	BindingAlgFactory<Term<Ty>, Ty> bindFact = new BindingAlgFactory<>();
+	BindingAlgFactory<CTerm<CTy>, CTy> bindFact = new BindingAlgFactory<>();
 
-	Context<Bind<Term<Ty>, Ty>> ctx = new Context<Bind<Term<Ty>, Ty>>(bindFact);
+	Context<CBind<CTerm<CTy>, CTy>> ctx = new Context<>(bindFact);
 
-	Ty bool = tyFact.TyBool();
-	Term<Ty> t = tmFact.TmTrue();
-	Term<Ty> f = tmFact.TmFalse();
-	Term<Ty> x = tmFact.TmVar(0, 1);
-	Term<Ty> eo = tmFact.TmVar(1, 2);
-	Term<Ty> iszerox = tmFact.TmIsZero(tmFact.TmVar(0, 2));
-	Term<Ty> predx = tmFact.TmPred(tmFact.TmVar(0, 2));
-	Ty nat = tyFact.TyNat();
-	Ty nat2bool = tyFact.TyArr(nat, tyFact.TyBool());
-	Ty eoTy = tyFact.TyRecord(Arrays.asList(new Tuple2<>("even", nat2bool), new Tuple2<>("odd", nat2bool)));
-	Term<Ty> even = tmFact.TmAbs("x", nat, tmFact.TmIf(iszerox, t, tmFact.TmApp(tmFact.TmProj(eo, "odd"), predx)));
-	Term<Ty> odd = tmFact.TmAbs("x", nat, tmFact.TmIf(iszerox, f, tmFact.TmApp(tmFact.TmProj(eo, "even"), predx)));
-	Term<Ty> evenodd = tmFact.TmFix(tmFact.TmAbs("eo", eoTy, tmFact.TmRecord(Arrays.asList(new Tuple2<>("even", even), new Tuple2<>("odd", odd)))));
+	CTy bool = tyFact.TyBool();
+	CTerm<CTy> t = tmFact.TmTrue();
+	CTerm<CTy> f = tmFact.TmFalse();
+	CTerm<CTy> x = tmFact.TmVar(0, 1);
+	CTerm<CTy> eo = tmFact.TmVar(1, 2);
+	CTerm<CTy> iszerox = tmFact.TmIsZero(tmFact.TmVar(0, 2));
+	CTerm<CTy> predx = tmFact.TmPred(tmFact.TmVar(0, 2));
+	CTy nat = tyFact.TyNat();
+	CTy nat2bool = tyFact.TyArr(nat, tyFact.TyBool());
+	CTy eoTy = tyFact.TyRecord(Arrays.asList(new Tuple2<>("even", nat2bool), new Tuple2<>("odd", nat2bool)));
+	CTerm<CTy> even = tmFact.TmAbs("x", nat, tmFact.TmIf(iszerox, t, tmFact.TmApp(tmFact.TmProj(eo, "odd"), predx)));
+	CTerm<CTy> odd = tmFact.TmAbs("x", nat, tmFact.TmIf(iszerox, f, tmFact.TmApp(tmFact.TmProj(eo, "even"), predx)));
+	CTerm<CTy> evenodd = tmFact.TmFix(tmFact.TmAbs("eo", eoTy, tmFact.TmRecord(Arrays.asList(new Tuple2<>("even", even), new Tuple2<>("odd", odd)))));
 
 	// typer
 	TypeofImpl typeof = new TypeofImpl();

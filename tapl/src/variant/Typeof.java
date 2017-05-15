@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import library.Tuple3;
 import typed.BindingAlg;
 import utils.ITypeof;
-import variant.termalg.shared.GTermAlg;
-import variant.tyalg.external.TyAlgMatcher;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
 	TyAlg<Ty> tyAlg();

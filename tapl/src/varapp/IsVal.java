@@ -1,7 +1,5 @@
 package varapp;
 
-import varapp.termalg.shared.GTermAlg;
-
 public interface IsVal<Term> extends GTermAlg<Term, Boolean> {
   default Boolean TmVar(int x, int n) {
     return false;

@@ -1,6 +1,5 @@
 package bot;
 
-import bot.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends top.Typeof<Term, Ty, Bind> {

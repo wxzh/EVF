@@ -1,7 +1,5 @@
 package fullerror;
 
-import fullerror.tyalg.external.TyAlgMatcher;
-import fullerror.tyalg.shared.TyAlgDefault;
 import library.Zero;
 import utils.IJoin;
 import utils.IMeet;

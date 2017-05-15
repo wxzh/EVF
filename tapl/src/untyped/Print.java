@@ -1,7 +1,6 @@
 package untyped;
 
 import library.Tuple2;
-import untyped.termalg.shared.GTermAlg;
 import utils.Context;
 import utils.IPrint;
 

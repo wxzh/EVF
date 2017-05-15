@@ -1,7 +1,5 @@
 package let;
 
-import let.termalg.shared.GTermAlg;
-
 public interface Eval1<Term, Bind> extends GTermAlg<Term,Term>, varapp.Eval1<Term> {
 	TermAlg<Term> alg();
 

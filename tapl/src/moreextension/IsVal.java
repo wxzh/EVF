@@ -1,7 +1,5 @@
 package moreextension;
 
-import moreextension.termalg.shared.GTermAlg;
-
 public interface IsVal<Term, Ty> extends GTermAlg<Term, Ty, Boolean>, extension.IsVal<Term> {
 	default Boolean TmUnit() {
 		return true;

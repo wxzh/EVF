@@ -1,6 +1,5 @@
 package typed;
 
-import typed.bindingalg.shared.BindingAlgDefault;
 import utils.Context;
 import utils.IPrint;
 

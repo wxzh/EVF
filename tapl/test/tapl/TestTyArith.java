@@ -6,61 +6,61 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import arith.CTerm;
 import arith.IsNumericVal;
 import arith.IsVal;
-import arith.termalg.external.Term;
-import arith.termalg.external.TermAlgFactory;
-import arith.termalg.external.TermAlgVisitor;
+import arith.TermAlgFactory;
+import arith.TermAlgVisitor;
 import tapl.TestArith.Eval1Impl;
 import tapl.TestArith.PrintImpl;
+import tyarith.CTy;
 import tyarith.PrintTy;
 import tyarith.TyAlg;
+import tyarith.TyAlgFactory;
+import tyarith.TyAlgMatcher;
+import tyarith.TyAlgMatcherImpl;
+import tyarith.TyAlgVisitor;
 import tyarith.TyEqv;
 import tyarith.Typeof;
-import tyarith.tyalg.external.Ty;
-import tyarith.tyalg.external.TyAlgFactory;
-import tyarith.tyalg.external.TyAlgMatcher;
-import tyarith.tyalg.external.TyAlgMatcherImpl;
-import tyarith.tyalg.external.TyAlgVisitor;
+import utils.BindingAlgFactory;
+import utils.CBind;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
 import utils.ITyEqv;
 import utils.ITypeof;
 import utils.NoRuleApplies;
-import utils.bindingalg.external.Bind;
-import utils.bindingalg.external.BindingAlgFactory;
 
 public class TestTyArith {
 
-	static class IsNumericalValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {}
+	static class IsNumericalValImpl implements IsNumericVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-	static class IsValImpl implements IsVal<Term>, TermAlgVisitor<Boolean> {}
+	static class IsValImpl implements IsVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-	static class EvalImpl implements Eval<Term> {
-		public Term eval1(Term e) {
+	static class EvalImpl implements Eval<CTerm> {
+		public CTerm eval1(CTerm e) {
 			return e.accept(eval1);
 		}
 
-		public boolean isVal(Term e) {
+		public boolean isVal(CTerm e) {
 			return e.accept(isVal);
 		}
 	}
 
-	static class PrintTyImpl implements PrintTy<Ty, Bind>, TyAlgVisitor<IPrint<Bind>> {}
-	static class TypeofImpl implements Typeof<Term, Ty, Bind>, TermAlgVisitor<ITypeof<Ty,Bind>> {
-	  public boolean tyEqv(Ty ty1, Ty ty2) {
+	static class PrintTyImpl implements PrintTy<CTy, CBind>, TyAlgVisitor<IPrint<CBind>> {}
+	static class TypeofImpl implements Typeof<CTerm, CTy, CBind>, TermAlgVisitor<ITypeof<CTy,CBind>> {
+	  public boolean tyEqv(CTy ty1, CTy ty2) {
 	    return new TyEqvImpl().visitTy(ty1).tyEqv(ty2);
 	  }
-	  public TyAlg<Ty> tyAlg() {
+	  public TyAlg<CTy> tyAlg() {
 	    return tyFact;
 	  }
-	  public TyAlgMatcher<Ty, Ty> tyMatcher() {
+	  public TyAlgMatcher<CTy, CTy> tyMatcher() {
 	    return new TyAlgMatcherImpl<>();
 	  }
 	}
-	static class TyEqvImpl implements TyEqv<Ty>, TyAlgVisitor<ITyEqv<Ty>> {
-	  public TyAlgMatcher<Ty, Boolean> matcher() {
+	static class TyEqvImpl implements TyEqv<CTy>, TyAlgVisitor<ITyEqv<CTy>> {
+	  public TyAlgMatcher<CTy, Boolean> matcher() {
 	    return new TyAlgMatcherImpl<>();
 	  }
 	}
@@ -73,22 +73,22 @@ public class TestTyArith {
 	static Eval1Impl eval1 = new Eval1Impl();
 	static EvalImpl eval = new EvalImpl();
 	static BindingAlgFactory bindFact = new BindingAlgFactory();
-	static Context<Bind> ctx = new Context<Bind>(bindFact);
+	static Context<CBind> ctx = new Context<>(bindFact);
 
-	static Term t = tmFact.TmTrue();
-	static Term f = tmFact.TmFalse();
-	static Term if_f_then_t_else_f = tmFact.TmIf(f, t, f);
-	static Term zero = tmFact.TmZero();
-	static Term pred_zero = tmFact.TmPred(zero);
-	static Term succ_pred_0 = tmFact.TmSucc(tmFact.TmPred(zero));
-	static Term succ_succ_0 = tmFact.TmSucc(tmFact.TmSucc(zero));
-	static Term iszero_pred_succ_succ_0 = tmFact.TmIsZero(tmFact.TmPred(tmFact.TmSucc(tmFact.TmSucc(zero))));
+	static CTerm t = tmFact.TmTrue();
+	static CTerm f = tmFact.TmFalse();
+	static CTerm if_f_then_t_else_f = tmFact.TmIf(f, t, f);
+	static CTerm zero = tmFact.TmZero();
+	static CTerm pred_zero = tmFact.TmPred(zero);
+	static CTerm succ_pred_0 = tmFact.TmSucc(tmFact.TmPred(zero));
+	static CTerm succ_succ_0 = tmFact.TmSucc(tmFact.TmSucc(zero));
+	static CTerm iszero_pred_succ_succ_0 = tmFact.TmIsZero(tmFact.TmPred(tmFact.TmSucc(tmFact.TmSucc(zero))));
 
-	static String print(Term t) {
+	static String print(CTerm t) {
 		return t.accept(print).print(ctx);
 	}
 
-	static void println(Term t) {
+	static void println(CTerm t) {
 		System.out.println(t.accept(print).print(ctx));
 	}
 

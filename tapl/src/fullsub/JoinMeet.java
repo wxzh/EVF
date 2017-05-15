@@ -1,7 +1,5 @@
 package fullsub;
 
-import fullsub.tyalg.external.TyAlgMatcher;
-import fullsub.tyalg.shared.TyAlgDefault;
 import library.Zero;
 import utils.IJoin;
 import utils.IMeet;

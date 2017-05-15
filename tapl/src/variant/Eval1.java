@@ -3,8 +3,6 @@ package variant;
 import java.util.List;
 
 import library.Tuple3;
-import variant.termalg.external.TermAlgMatcher;
-import variant.termalg.shared.GTermAlg;
 
 public interface Eval1<Term, Ty> extends GTermAlg<Term, Ty, Term>, utils.Eval1<Term> {
 	TermAlg<Term, Ty> alg();

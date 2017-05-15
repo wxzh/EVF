@@ -1,7 +1,5 @@
 package top;
 
-import top.tyalg.external.TyAlgMatcher;
-import top.tyalg.shared.GTyAlg;
 import utils.ISubtype;
 
 public interface Subtype<Ty> extends GTyAlg<Ty, ISubtype<Ty>>, typed.Subtype<Ty> {

@@ -6,55 +6,55 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import arith.CTerm;
 import arith.Eval1;
 import arith.IsNumericVal;
 import arith.IsVal;
 import arith.Print;
 import arith.TermAlg;
-import arith.termalg.external.Term;
-import arith.termalg.external.TermAlgFactory;
-import arith.termalg.external.TermAlgMatcher;
-import arith.termalg.external.TermAlgMatcherImpl;
-import arith.termalg.external.TermAlgVisitor;
+import arith.TermAlgFactory;
+import arith.TermAlgMatcher;
+import arith.TermAlgMatcherImpl;
+import arith.TermAlgVisitor;
+import utils.BindingAlgFactory;
+import utils.CBind;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
 import utils.NoRuleApplies;
-import utils.bindingalg.external.Bind;
-import utils.bindingalg.external.BindingAlgFactory;
 
 public class TestArith {
 
-	static class IsNumericalValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {}
+	static class IsNumericalValImpl implements IsNumericVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-	static class IsValImpl implements IsVal<Term>, TermAlgVisitor<Boolean> {}
+	static class IsValImpl implements IsVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-	static class PrintImpl implements Print<Term, Bind>, TermAlgVisitor<IPrint<Bind>> {
-		public TermAlgMatcher<Term, String> matcher() {
+	static class PrintImpl implements Print<CTerm, CBind>, TermAlgVisitor<IPrint<CBind>> {
+		public TermAlgMatcher<CTerm, String> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 	}
 
-	static class Eval1Impl implements Eval1<Term>, TermAlgVisitor<Term> {
-		public TermAlg<Term> alg() {
+	static class Eval1Impl implements Eval1<CTerm>, TermAlgVisitor<CTerm> {
+		public TermAlg<CTerm> alg() {
 			return alg;
 		}
 
-		public TermAlgMatcher<Term, Term> matcher() {
+		public TermAlgMatcher<CTerm, CTerm> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 
-		public boolean isNumericVal(Term t) {
+		public boolean isNumericVal(CTerm t) {
 			return isNumericalVal.visitTerm(t);
 		}
 	}
 
-	static class EvalImpl implements Eval<Term> {
-		public Term eval1(Term e) {
+	static class EvalImpl implements Eval<CTerm> {
+		public CTerm eval1(CTerm e) {
 			return e.accept(eval1);
 		}
 
-		public boolean isVal(Term e) {
+		public boolean isVal(CTerm e) {
 			return e.accept(isVal);
 		}
 	}
@@ -66,22 +66,22 @@ public class TestArith {
 	static Eval1Impl eval1 = new Eval1Impl();
 	static EvalImpl eval = new EvalImpl();
 	static BindingAlgFactory bindFact = new BindingAlgFactory();
-	static Context<Bind> ctx = new Context<Bind>(bindFact);
+	static Context<CBind> ctx = new Context<CBind>(bindFact);
 
-	static Term t = alg.TmTrue();
-	static Term f = alg.TmFalse();
-	static Term if_f_then_t_else_f = alg.TmIf(f, t, f);
-	static Term zero = alg.TmZero();
-	static Term pred_zero = alg.TmPred(zero);
-	static Term succ_pred_0 = alg.TmSucc(alg.TmPred(zero));
-	static Term succ_succ_0 = alg.TmSucc(alg.TmSucc(zero));
-	static Term iszero_pred_succ_succ_0 = alg.TmIsZero(alg.TmPred(alg.TmSucc(alg.TmSucc(zero))));
+	static CTerm t = alg.TmTrue();
+	static CTerm f = alg.TmFalse();
+	static CTerm if_f_then_t_else_f = alg.TmIf(f, t, f);
+	static CTerm zero = alg.TmZero();
+	static CTerm pred_zero = alg.TmPred(zero);
+	static CTerm succ_pred_0 = alg.TmSucc(alg.TmPred(zero));
+	static CTerm succ_succ_0 = alg.TmSucc(alg.TmSucc(zero));
+	static CTerm iszero_pred_succ_succ_0 = alg.TmIsZero(alg.TmPred(alg.TmSucc(alg.TmSucc(zero))));
 
-	static String print(Term t) {
+	static String print(CTerm t) {
 		return t.accept(print).print(ctx);
 	}
 
-	static void println(Term t) {
+	static void println(CTerm t) {
 		System.out.println(t.accept(print).print(ctx));
 	}
 

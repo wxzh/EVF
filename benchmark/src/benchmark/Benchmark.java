@@ -1,10 +1,6 @@
 package benchmark;
 
-import benchmark.listalg.external.List;
-import benchmark.listalg.external.ListAlgFactory;
-import benchmark.listalg.external.ListAlgVisitor;
-
-class SumQueryImpl implements SumQuery<List>, ListAlgVisitor<Integer> {}
+class SumQueryImpl implements SumQuery<CList>, ListAlgVisitor<Integer> {}
 
 public class Benchmark {
    static double ns2ms(long before, long after) {
@@ -15,7 +11,7 @@ public class Benchmark {
        FList fl = new FNil();
        IList il = new Nil();
        ListAlgFactory alg = new ListAlgFactory();
-       List exl = alg.Nil();
+       CList exl = alg.Nil();
 
        long t1, t2;
        for (int i = 0; i < 1000; i++) {

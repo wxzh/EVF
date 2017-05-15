@@ -1,8 +1,5 @@
 package arith;
 
-import arith.termalg.external.TermAlgMatcher;
-import arith.termalg.shared.GTermAlg;
-
 public interface Eval1<Term> extends GTermAlg<Term, Term>, bool.Eval1<Term>, nat.Eval1<Term> {
 	@Override TermAlgMatcher<Term, Term> matcher();
 	@Override TermAlg<Term> alg();

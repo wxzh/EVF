@@ -1,7 +1,5 @@
 package typed;
 
-import typed.tyalg.external.TyAlgMatcher;
-import typed.tyalg.shared.GTyAlg;
 import utils.ITyEqv;
 
 public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>> {

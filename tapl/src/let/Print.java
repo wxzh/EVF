@@ -1,6 +1,5 @@
 package let;
 
-import let.termalg.shared.GTermAlg;
 import utils.IPrint;
 
 public interface Print<Term, Bind> extends GTermAlg<Term, IPrint<Bind>> {

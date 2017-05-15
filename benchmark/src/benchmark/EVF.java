@@ -1,10 +1,9 @@
 package benchmark;
 
 import annotation.Visitor;
-import benchmark.listalg.shared.ListAlgQuery;
 import library.Monoid;
 
-@Visitor public interface ListAlg<List> {
+@Visitor interface ListAlg<List> {
   List Nil();
   List Cons(Integer head, List tail);
   List Link(boolean color, List list);

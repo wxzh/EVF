@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import library.Tuple2;
-import record.termalg.shared.GTermAlg;
-import record.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {

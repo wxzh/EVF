@@ -1,7 +1,5 @@
 package floatstring;
 
-import floatstring.termalg.shared.GTermAlg;
-import floatstring.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {

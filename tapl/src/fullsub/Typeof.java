@@ -1,7 +1,5 @@
 package fullsub;
 
-import fullsub.termalg.shared.GTermAlg;
-import fullsub.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>,

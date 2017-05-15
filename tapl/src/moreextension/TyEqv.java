@@ -1,7 +1,5 @@
 package moreextension;
 
-import moreextension.tyalg.external.TyAlgMatcher;
-import moreextension.tyalg.shared.GTyAlg;
 import utils.ITyEqv;
 
 public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>>, extension.TyEqv<Ty> {

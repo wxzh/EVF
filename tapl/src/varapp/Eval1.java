@@ -1,7 +1,5 @@
 package varapp;
 
-import varapp.termalg.shared.GTermAlg;
-
 public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
   Term termSubstTop(Term s, Term t);
  	boolean isVal(Term t);

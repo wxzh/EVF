@@ -1,6 +1,5 @@
 package let;
 
-import let.termalg.shared.GTermAlg;
 import typed.BindingAlg;
 import utils.ITypeof;
 

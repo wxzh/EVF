@@ -1,6 +1,5 @@
 package floatstring;
 
-import floatstring.termalg.shared.GTermAlg;
 import utils.IPrint;
 
 public interface Print<Term, Bind> extends GTermAlg<Term, IPrint<Bind>> {

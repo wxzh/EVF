@@ -1,7 +1,5 @@
 package fullref;
 
-import fullref.termalg.shared.GTermAlg;
-
 public interface IsVal<Term, Ty> extends GTermAlg<Term, Ty, Boolean>, fullsimple.IsVal<Term, Ty> {
   default Boolean TmLoc(int l) {
 		return true;

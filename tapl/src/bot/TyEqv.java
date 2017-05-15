@@ -1,7 +1,5 @@
 package bot;
 
-import bot.tyalg.external.TyAlgMatcher;
-import bot.tyalg.shared.GTyAlg;
 import utils.ITyEqv;
 
 public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>>, top.TyEqv<Ty> {

@@ -1,6 +1,5 @@
 package fullsub;
 
-import fullsub.tyalg.shared.GTyAlg;
 import utils.IPrint;
 
 public interface PrintTy<Ty, Bind>

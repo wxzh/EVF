@@ -1,6 +1,5 @@
 package fullerror;
 
-import fullerror.termalg.shared.TermAlgQueryWithCtx;
 import library.Monoid;
 
 public interface IsVarUsed<Term, Ty> extends TermAlgQueryWithCtx<Integer, Boolean, Term, Ty>, typed.IsVarUsed<Term, Ty> {

@@ -2,8 +2,6 @@ package fullsub;
 
 import java.util.List;
 
-import fullsub.tyalg.external.TyAlgMatcher;
-import fullsub.tyalg.shared.TyAlgDefault;
 import library.Tuple2;
 import library.Zero;
 import utils.ISubtype;

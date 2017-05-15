@@ -2,7 +2,6 @@ package let;
 
 import java.util.function.Function;
 
-import let.termalg.shared.GTermAlg;
 import utils.TmMapCtx;
 
 public interface TmMap<Term> extends GTermAlg<Term, Function<TmMapCtx<Term>, Term>> {

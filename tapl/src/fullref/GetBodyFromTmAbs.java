@@ -2,7 +2,6 @@ package fullref;
 
 import java.util.Optional;
 
-import fullref.termalg.shared.TermAlgDefault;
 import library.Zero;
 
 public interface GetBodyFromTmAbs<Term, Ty> extends TermAlgDefault<Term, Ty, Optional<Term>>, typed.GetBodyFromTmAbs<Term, Ty> {

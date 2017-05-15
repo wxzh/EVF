@@ -1,7 +1,5 @@
 package bool;
 
-import bool.termalg.shared.GTermAlg;
-import bool.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {

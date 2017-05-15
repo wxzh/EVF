@@ -1,8 +1,5 @@
 package typed;
 
-import typed.termalg.external.TermAlgMatcher;
-import typed.termalg.shared.GTermAlg;
-
 public interface Eval1<Term, Ty> extends GTermAlg<Term, Ty, Term>, varapp.Eval1<Term> {
 	TermAlg<Term, Ty> alg();
 	TermAlgMatcher<Term, Ty, Term> matcher();

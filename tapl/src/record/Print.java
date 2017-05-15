@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import library.Tuple2;
-import record.termalg.shared.GTermAlg;
 import utils.IPrint;
 
 public interface Print<Term, Bind> extends GTermAlg<Term, IPrint<Bind>> {

@@ -1,7 +1,5 @@
 package nat;
 
-import nat.tyalg.external.TyAlgMatcher;
-import nat.tyalg.shared.GTyAlg;
 import utils.ITyEqv;
 
 public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>> {

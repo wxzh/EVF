@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import library.Tuple2;
-import record.tyalg.external.TyAlgMatcher;
-import record.tyalg.shared.TyAlgDefault;
 import utils.IJoin;
 import utils.IMeet;
 

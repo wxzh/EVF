@@ -1,6 +1,5 @@
 package fulluntyped;
 
-import fulluntyped.bindingalg.shared.BindingAlgDefault;
 import utils.Context;
 import utils.IPrint;
 

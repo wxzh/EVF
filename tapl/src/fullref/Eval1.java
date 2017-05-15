@@ -1,8 +1,5 @@
 package fullref;
 
-import fullref.termalg.external.TermAlgMatcher;
-import fullref.termalg.shared.GTermAlg;
-
 public interface Eval1<Term, Ty, Bind> extends GTermAlg<Term, Ty, Term>, fullsimple.Eval1<Term, Ty, Bind> {
 	Store<Term> store();
 	@Override TermAlg<Term, Ty> alg();

@@ -1,6 +1,5 @@
 package simplebool;
 
-import simplebool.tyalg.shared.GTyAlg;
 import utils.IPrint;
 
 public interface PrintTy<Ty, Bind> extends GTyAlg<Ty, IPrint<Bind>>, typed.PrintTy<Ty, Bind>, bool.PrintTy<Ty, Bind> {

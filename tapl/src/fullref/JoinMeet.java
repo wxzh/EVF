@@ -1,7 +1,5 @@
 package fullref;
 
-import fullref.tyalg.external.TyAlgMatcher;
-import fullref.tyalg.shared.TyAlgDefault;
 import library.Zero;
 import utils.IJoin;
 import utils.IMeet;

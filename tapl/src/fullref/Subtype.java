@@ -1,7 +1,5 @@
 package fullref;
 
-import fullref.tyalg.external.TyAlgMatcher;
-import fullref.tyalg.shared.GTyAlg;
 import utils.ISubtype;
 
 public interface Subtype<Ty> extends GTyAlg<Ty, ISubtype<Ty>>, bot.Subtype<Ty>, fullsub.Subtype<Ty>, variant.Subtype<Ty> {

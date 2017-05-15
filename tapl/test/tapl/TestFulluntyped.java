@@ -10,22 +10,22 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import fulluntyped.BindingAlgFactory;
+import fulluntyped.BindingAlgMatcher;
+import fulluntyped.BindingAlgMatcherImpl;
+import fulluntyped.BindingAlgVisitor;
+import fulluntyped.CBind;
+import fulluntyped.CTerm;
 import fulluntyped.Eval1;
 import fulluntyped.IsNumericVal;
 import fulluntyped.Print;
 import fulluntyped.PrintBind;
 import fulluntyped.TermAlg;
+import fulluntyped.TermAlgFactory;
+import fulluntyped.TermAlgMatcher;
+import fulluntyped.TermAlgMatcherImpl;
+import fulluntyped.TermAlgVisitor;
 import fulluntyped.TmMap;
-import fulluntyped.bindingalg.external.Bind;
-import fulluntyped.bindingalg.external.BindingAlgFactory;
-import fulluntyped.bindingalg.external.BindingAlgMatcher;
-import fulluntyped.bindingalg.external.BindingAlgMatcherImpl;
-import fulluntyped.bindingalg.external.BindingAlgVisitor;
-import fulluntyped.termalg.external.Term;
-import fulluntyped.termalg.external.TermAlgFactory;
-import fulluntyped.termalg.external.TermAlgMatcher;
-import fulluntyped.termalg.external.TermAlgMatcherImpl;
-import fulluntyped.termalg.external.TermAlgVisitor;
 import library.Tuple2;
 import utils.Context;
 import utils.Eval;
@@ -33,69 +33,69 @@ import utils.IPrint;
 import utils.TmMapCtx;
 
 public class TestFulluntyped {
-	class PrintImpl implements Print<Term, Bind<Term>>, TermAlgVisitor<IPrint<Bind<Term>>> {
-		public TermAlgMatcher<Term, String> matcher() {
+	class PrintImpl implements Print<CTerm, CBind<CTerm>>, TermAlgVisitor<IPrint<CBind<CTerm>>> {
+		public TermAlgMatcher<CTerm, String> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 
-		public String printBind(Bind<Term> bind, Context<Bind<Term>> ctx) {
+		public String printBind(CBind<CTerm> bind, Context<CBind<CTerm>> ctx) {
 		  return new PrintBindImpl().visitBind(bind).print(ctx);
 		}
 	}
 
-	class PrintBindImpl implements PrintBind<Bind<Term>, Term>, BindingAlgVisitor<IPrint<Bind<Term>>, Term> {
-	  public String printTerm(Term t, Context<Bind<Term>> ctx) {
+	class PrintBindImpl implements PrintBind<CBind<CTerm>, CTerm>, BindingAlgVisitor<IPrint<CBind<CTerm>>, CTerm> {
+	  public String printTerm(CTerm t, Context<CBind<CTerm>> ctx) {
 	    return new PrintImpl().visitTerm(t).print(ctx);
 	  }
 	}
 
-	class IsNumericValImpl implements IsNumericVal<Term>, TermAlgVisitor<Boolean> {}
+	class IsNumericValImpl implements IsNumericVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-	class IsValImpl implements fulluntyped.IsVal<Term>, TermAlgVisitor<Boolean> {}
+	class IsValImpl implements fulluntyped.IsVal<CTerm>, TermAlgVisitor<Boolean> {}
 
-  class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
-    public TermAlg<Term> alg() {
+  class TmMapImpl implements TmMap<CTerm>, TermAlgVisitor<Function<TmMapCtx<CTerm>, CTerm>> {
+    public TermAlg<CTerm> alg() {
       return fact;
     }
   }
 
-	abstract class Eval1Impl implements Eval1<Term, Bind<Term>>, TermAlgVisitor<Term> {
-	  @Override public Term termSubstTop(Term s, Term t) {
+	abstract class Eval1Impl implements Eval1<CTerm, CBind<CTerm>>, TermAlgVisitor<CTerm> {
+	  @Override public CTerm termSubstTop(CTerm s, CTerm t) {
 	    return deBruijn.termSubstTop(s, t);
 	  }
 
-		@Override public boolean isNumericVal(Term e) {
+		@Override public boolean isNumericVal(CTerm e) {
 			return new IsNumericValImpl().visitTerm(e);
 		}
 
-		@Override public boolean isVal(Term e) {
+		@Override public boolean isVal(CTerm e) {
 			return isVal.visitTerm(e);
 		}
 
-		@Override public BindingAlgMatcher<Bind<Term>, Term, Term> bindMatcher() {
+		@Override public BindingAlgMatcher<CBind<CTerm>, CTerm, CTerm> bindMatcher() {
 			return new BindingAlgMatcherImpl<>();
 		}
 
-		@Override public TermAlg<Term> alg() {
+		@Override public TermAlg<CTerm> alg() {
 			return fact;
 		}
 
-		public TermAlgMatcher<Term, Term> matcher() {
+		public TermAlgMatcher<CTerm, CTerm> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
 	}
 
-	abstract class EvalImpl implements Eval<Term> {
-		@Override public boolean isVal(Term t) {
+	abstract class EvalImpl implements Eval<CTerm> {
+		@Override public boolean isVal(CTerm t) {
 			return t.accept(isVal);
 		}
 	}
 
-	EvalImpl evalCtx(Context<Bind<Term>> ctx) {
+	EvalImpl evalCtx(Context<CBind<CTerm>> ctx) {
 		return new EvalImpl() {
-			public Term eval1(Term t) {
+			public CTerm eval1(CTerm t) {
 				return t.accept(new Eval1Impl() {
-					public Context<Bind<Term>> ctx() {
+					public Context<CBind<CTerm>> ctx() {
 						return ctx;
         }});
     }};
@@ -103,31 +103,31 @@ public class TestFulluntyped {
 
 	TmMapImpl deBruijn = new TmMapImpl();
 	TermAlgFactory fact = new TermAlgFactory();
-	BindingAlgFactory<Term> bindFact = new BindingAlgFactory<>();
-	Context<Bind<Term>> ctx = new Context<>(new BindingAlgFactory<>());
+	BindingAlgFactory<CTerm> bindFact = new BindingAlgFactory<>();
+	Context<CBind<CTerm>> ctx = new Context<>(new BindingAlgFactory<>());
 	PrintImpl print = new PrintImpl();
 	PrintBindImpl printBind = new PrintBindImpl();
 	IsValImpl isVal = new IsValImpl();
 	EvalImpl eval = evalCtx(ctx);
 
-	Term t = fact.TmTrue();
-	Term f = fact.TmFalse();
-	Term if_f_then_t_else_f = fact.TmIf(f, t, f);
-	Term x = fact.TmVar(0, 1);
-	Term id = fact.TmAbs("x", x);
-	Term lam_x_xx = fact.TmAbs("x", fact.TmApp(x, x));
-	Term id_lam_x_xx = fact.TmApp(id, fact.TmAbs("x", fact.TmApp(x, x)));
-	Term record = fact.TmRecord(Arrays.asList(new Tuple2<>("x", id), new Tuple2<>("y", id_lam_x_xx)));
-	Term proj = fact.TmProj(record, "x");
-	Term hello = fact.TmString("hello");
-	Term timesfloat = fact.TmTimesFloat(fact.TmTimesFloat(fact.TmFloat(2f), fact.TmFloat(3f)),
-			fact.TmTimesFloat(fact.TmFloat(4f), fact.TmFloat(5f)));
-	Term o = fact.TmZero();
-	Term succ_pred_0 = fact.TmSucc(fact.TmPred(o));
-	Term let_x_t_in_x = fact.TmLet("x", t, x);
-	Term mixed = fact.TmLet("t", fact.TmApp(proj, t), fact.TmIf(fact.TmVar(0, 1), o, succ_pred_0));
+	CTerm t = fact.TmTrue();
+	CTerm f = fact.TmFalse();
+	CTerm if_f_then_t_else_f = fact.TmIf(f, t, f);
+	CTerm x = fact.TmVar(0, 1);
+	CTerm id = fact.TmAbs("x", x);
+	CTerm lam_x_xx = fact.TmAbs("x", fact.TmApp(x, x));
+	CTerm id_lam_x_xx = fact.TmApp(id, fact.TmAbs("x", fact.TmApp(x, x)));
+	CTerm record = fact.TmRecord(Arrays.asList(new Tuple2<>("x", id), new Tuple2<>("y", id_lam_x_xx)));
+	CTerm proj = fact.TmProj(record, "x");
+	CTerm hello = fact.TmString("hello");
+	CTerm timesfloat = fact.TmTimesFloat(fact.TmTimesFloat(fact.TmFloat(2f), fact.TmFloat(3f)),
+		fact.TmTimesFloat(fact.TmFloat(4f), fact.TmFloat(5f)));
+	CTerm o = fact.TmZero();
+	CTerm succ_pred_0 = fact.TmSucc(fact.TmPred(o));
+	CTerm let_x_t_in_x = fact.TmLet("x", t, x);
+	CTerm mixed = fact.TmLet("t", fact.TmApp(proj, t), fact.TmIf(fact.TmVar(0, 1), o, succ_pred_0));
 
-	Context<Bind<Term>> ctx2 = ctx.addBinding("x", bindFact.TmAbbBind(t)).addName("y");
+	Context<CBind<CTerm>> ctx2 = ctx.addBinding("x", bindFact.TmAbbBind(t)).addName("y");
 
 	@Test
 	public void testPrint() {
@@ -197,20 +197,20 @@ public class TestFulluntyped {
 
 	@Test
 	public void testShift() {
-		Term x2 = fact.TmVar(1, 2);
-		Term y = fact.TmVar(0, 2);
+		CTerm x2 = fact.TmVar(1, 2);
+		CTerm y = fact.TmVar(0, 2);
 		assertEquals("if x then y else if y then x else x", deBruijn.termShift(0, fact.TmIf(x2, y, fact.TmIf(y, x2, x2))).accept(print).print(ctx2));
 		assertEquals("x", deBruijn.termShift(1, x).accept(print).print(ctx2));
 
 		// (\.\.1 (0 2)) -> (\.\.1 (0 4))
-		Term e = fact.TmAbs("x", fact.TmAbs("y", fact.TmApp(fact.TmVar(1, 3), fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))));
+		CTerm e = fact.TmAbs("x", fact.TmAbs("y", fact.TmApp(fact.TmVar(1, 3), fact.TmApp(fact.TmVar(0, 3), fact.TmVar(2, 3)))));
 		assertEquals("\\x.\\y.[bad index: 1/5 in {(y,), (x,)}] [bad index: 0/5 in {(y,), (x,)}] [bad index: 4/5 in {(y,), (x,)}]", deBruijn.termShift(2, e).accept(print).print(ctx));
 	}
 
 	// Exercise 6.2.5
 	@Test
 	public void testTermSubst() {
-		Term e;
+		CTerm e;
 
 		e = fact.TmApp(fact.TmVar(0, 2), fact.TmVar(0, 2));
 		assertEquals("b b", e.accept(print).print(ctx.addName("a").addName("b")));

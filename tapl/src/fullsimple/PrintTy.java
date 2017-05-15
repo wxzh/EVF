@@ -1,6 +1,5 @@
 package fullsimple;
 
-import fullsimple.tyalg.shared.GTyAlg;
 import utils.IPrint;
 
 public interface PrintTy<Ty, Bind>

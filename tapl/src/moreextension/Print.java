@@ -1,7 +1,5 @@
 package moreextension;
 
-import moreextension.termalg.external.TermAlgMatcher;
-import moreextension.termalg.shared.GTermAlg;
 import utils.Context;
 import utils.IPrint;
 

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import library.Tuple2;
-import record.termalg.external.TermAlgMatcher;
-import record.termalg.shared.GTermAlg;
 
 public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
 	TermAlg<Term> alg();

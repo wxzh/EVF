@@ -4,8 +4,6 @@ import java.util.List;
 
 import library.Tuple2;
 import utils.ISubtype;
-import variant.tyalg.external.TyAlgMatcher;
-import variant.tyalg.shared.GTyAlg;
 
 public interface Subtype<Ty> extends GTyAlg<Ty, ISubtype<Ty>> {
 	TyAlgMatcher<Ty, Boolean> matcher();

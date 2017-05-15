@@ -2,7 +2,6 @@ package fullsimple;
 
 import java.util.Optional;
 
-import fullsimple.bindingalg.shared.GBindingAlg;
 import utils.Context;
 import utils.IPrint;
 

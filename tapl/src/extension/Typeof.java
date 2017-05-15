@@ -1,7 +1,5 @@
 package extension;
 
-import extension.termalg.shared.GTermAlg;
-import extension.tyalg.external.TyAlgMatcher;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>,

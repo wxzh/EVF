@@ -1,7 +1,5 @@
 package fullref;
 
-import fullref.tyalg.external.TyAlgMatcher;
-import fullref.tyalg.shared.GTyAlg;
 import utils.ITyEqv;
 
 public interface TyEqv<Ty> extends GTyAlg<Ty, ITyEqv<Ty>>, fullsub.TyEqv<Ty>, bot.TyEqv<Ty>, variant.TyEqv<Ty> {

@@ -2,8 +2,6 @@ package varapp;
 
 import java.util.Optional;
 
-import varapp.termalg.shared.TermAlgTransform;
-
 public interface ConstFunElim<Term> extends TermAlgTransform<Term> {
   boolean isVarUsed(int n, Term t);
   Term termShift(int d, Term t);

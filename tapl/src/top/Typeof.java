@@ -1,6 +1,6 @@
 package top;
 
-import typed.termalg.shared.GTermAlg;
+import typed.GTermAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, typed.Typeof<Term, Ty, Bind> {

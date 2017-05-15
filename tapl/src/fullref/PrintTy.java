@@ -1,6 +1,5 @@
 package fullref;
 
-import fullref.tyalg.shared.GTyAlg;
 import utils.IPrint;
 
 public interface PrintTy<Ty, Bind> extends GTyAlg<Ty, IPrint<Bind>>, fullsimple.PrintTy<Ty, Bind>, fullerror.PrintTy<Ty, Bind> {

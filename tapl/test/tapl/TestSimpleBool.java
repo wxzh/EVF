@@ -8,31 +8,31 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import simplebool.CTerm;
+import simplebool.CTy;
 import simplebool.Eval1;
 import simplebool.IsVal;
 import simplebool.Print;
 import simplebool.PrintTy;
 import simplebool.TermAlg;
+import simplebool.TermAlgFactory;
+import simplebool.TermAlgMatcher;
+import simplebool.TermAlgMatcherImpl;
+import simplebool.TermAlgVisitor;
 import simplebool.TmMap;
 import simplebool.TyAlg;
+import simplebool.TyAlgFactory;
+import simplebool.TyAlgMatcher;
+import simplebool.TyAlgMatcherImpl;
+import simplebool.TyAlgVisitor;
 import simplebool.TyEqv;
 import simplebool.Typeof;
-import simplebool.termalg.external.Term;
-import simplebool.termalg.external.TermAlgFactory;
-import simplebool.termalg.external.TermAlgMatcher;
-import simplebool.termalg.external.TermAlgMatcherImpl;
-import simplebool.termalg.external.TermAlgVisitor;
-import simplebool.tyalg.external.Ty;
-import simplebool.tyalg.external.TyAlgFactory;
-import simplebool.tyalg.external.TyAlgMatcher;
-import simplebool.tyalg.external.TyAlgMatcherImpl;
-import simplebool.tyalg.external.TyAlgVisitor;
 import typed.BindingAlg;
+import typed.BindingAlgFactory;
+import typed.BindingAlgVisitor;
+import typed.CBind;
 import typed.GetTypeFromBind;
 import typed.PrintBind;
-import typed.bindingalg.external.Bind;
-import typed.bindingalg.external.BindingAlgFactory;
-import typed.bindingalg.external.BindingAlgVisitor;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -42,100 +42,100 @@ import utils.TmMapCtx;
 import utils.TypeError;
 
 public class TestSimpleBool {
-	static class IsValImpl implements IsVal<Term<Ty>,Ty>, TermAlgVisitor<Boolean,Ty> {}
+	static class IsValImpl implements IsVal<CTerm<CTy>,CTy>, TermAlgVisitor<Boolean,CTy> {}
 
-	static class PrintAll implements Print<Term<Ty>,Ty,Bind<Ty>>, PrintTy<Ty, Bind<Ty>>, PrintBind<Bind<Ty>, Ty>,
-	    TermAlgVisitor<IPrint<Bind<Ty>>,Ty>, TyAlgVisitor<IPrint<Bind<Ty>>>, BindingAlgVisitor<IPrint<Bind<Ty>>, Ty>{
-		public TermAlgMatcher<Term<Ty>, Ty, String> matcher() {
+	static class PrintAll implements Print<CTerm<CTy>,CTy,CBind<CTy>>, PrintTy<CTy, CBind<CTy>>, PrintBind<CBind<CTy>, CTy>,
+	    TermAlgVisitor<IPrint<CBind<CTy>>,CTy>, TyAlgVisitor<IPrint<CBind<CTy>>>, BindingAlgVisitor<IPrint<CBind<CTy>>, CTy>{
+		public TermAlgMatcher<CTerm<CTy>, CTy, String> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
-		public String printBind(Bind<Ty> bind, Context<Bind<Ty>> ctx) {
+		public String printBind(CBind<CTy> bind, Context<CBind<CTy>> ctx) {
 		  return visitBind(bind).print(ctx);
 		}
-		public String printTy(Ty ty, utils.Context<Bind<Ty>> ctx) {
+		public String printTy(CTy ty, utils.Context<CBind<CTy>> ctx) {
 	    return visitTy(ty).print(ctx);
 		}
 	}
 
-	static class Eval1Impl implements Eval1<Term<Ty>,Ty>, TermAlgVisitor<Term<Ty>,Ty> {
-		public TermAlg<Term<Ty>,Ty> alg() {
+	static class Eval1Impl implements Eval1<CTerm<CTy>,CTy>, TermAlgVisitor<CTerm<CTy>,CTy> {
+		public TermAlg<CTerm<CTy>,CTy> alg() {
 			return tmFact;
 		}
 
-		public TermAlgMatcher<Term<Ty>,Ty,Term<Ty>> matcher() {
+		public TermAlgMatcher<CTerm<CTy>,CTy,CTerm<CTy>> matcher() {
 			return new TermAlgMatcherImpl<>();
 		}
-		public Term<Ty> termSubstTop(Term<Ty> s, Term<Ty> t) {
+		public CTerm<CTy> termSubstTop(CTerm<CTy> s, CTerm<CTy> t) {
 		  return new TmMapImpl().termSubstTop(s, t);
 		}
-		public boolean isVal(Term<Ty> t) {
+		public boolean isVal(CTerm<CTy> t) {
 		  return isVal.visitTerm(t);
 		}
 	}
 
-  static class TmMapImpl implements TmMap<Term<Ty>,Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>, Term<Ty>>, Ty> {
-    public TermAlg<Term<Ty>, Ty> alg() {
+  static class TmMapImpl implements TmMap<CTerm<CTy>,CTy>, TermAlgVisitor<Function<TmMapCtx<CTerm<CTy>>, CTerm<CTy>>, CTy> {
+    public TermAlg<CTerm<CTy>, CTy> alg() {
       return tmFact;
     }
   }
 
-	static class EvalImpl implements Eval<Term<Ty>> {
-		public Term<Ty> eval1(Term<Ty> e) {
+	static class EvalImpl implements Eval<CTerm<CTy>> {
+		public CTerm<CTy> eval1(CTerm<CTy> e) {
 			return e.accept(eval1);
 		}
 
-		public boolean isVal(Term<Ty> e) {
+		public boolean isVal(CTerm<CTy> e) {
 			return e.accept(isVal);
 		}
 	}
 
-	static class TypeofImpl implements Typeof<Term<Ty>, Ty, Bind<Ty>>, TermAlgVisitor<ITypeof<Ty,Bind<Ty>>,Ty> {
-	  public boolean tyEqv(Ty ty1, Ty ty2) {
+	static class TypeofImpl implements Typeof<CTerm<CTy>, CTy, CBind<CTy>>, TermAlgVisitor<ITypeof<CTy,CBind<CTy>>,CTy> {
+	  public boolean tyEqv(CTy ty1, CTy ty2) {
 	    return tyEqv.visitTy(ty1).tyEqv(ty2);
 	  }
-	  public BindingAlg<Bind<Ty>, Ty> bindAlg() {
+	  public BindingAlg<CBind<CTy>, CTy> bindAlg() {
 	    return bindFact;
 	  }
-	  public Ty getTypeFromBind(Bind<Ty> bind) {
+	  public CTy getTypeFromBind(CBind<CTy> bind) {
 	    return new GetTypeFromBindImpl().visitBind(bind);
 	  }
-	  public TyAlg<Ty> tyAlg() {
+	  public TyAlg<CTy> tyAlg() {
 	    return tyFact;
 	  }
-	  public TyAlgMatcher<Ty, Ty> tyMatcher() {
+	  public TyAlgMatcher<CTy, CTy> tyMatcher() {
 	    return new TyAlgMatcherImpl<>();
 	  }
 	}
 
-	static class GetTypeFromBindImpl implements GetTypeFromBind<Bind<Ty>, Ty>, BindingAlgVisitor<Ty,Ty> {}
+	static class GetTypeFromBindImpl implements GetTypeFromBind<CBind<CTy>, CTy>, BindingAlgVisitor<CTy,CTy> {}
 
-	static class TyEqvImpl implements TyEqv<Ty>, TyAlgVisitor<ITyEqv<Ty>> {
-	  public TyAlgMatcher<Ty, Boolean> matcher() {
+	static class TyEqvImpl implements TyEqv<CTy>, TyAlgVisitor<ITyEqv<CTy>> {
+	  public TyAlgMatcher<CTy, Boolean> matcher() {
 	    return new TyAlgMatcherImpl<>();
 	  }
 	}
 
-	static TermAlgFactory<Ty> tmFact = new TermAlgFactory<>();
+	static TermAlgFactory<CTy> tmFact = new TermAlgFactory<>();
 	static TyAlgFactory tyFact = new TyAlgFactory();
 
 	static PrintAll print = new PrintAll();
 	static IsValImpl isVal = new IsValImpl();
 	static Eval1Impl eval1 = new Eval1Impl();
 	static EvalImpl eval = new EvalImpl();
-	static BindingAlgFactory<Ty> bindFact = new BindingAlgFactory<>();
-	static Context<Bind<Ty>> ctx = new Context<>(bindFact);
+	static BindingAlgFactory<CTy> bindFact = new BindingAlgFactory<>();
+	static Context<CBind<CTy>> ctx = new Context<>(bindFact);
 	static TyEqvImpl tyEqv = new TyEqvImpl();
 	static TypeofImpl type = new TypeofImpl();
 
-	static Ty Bool = tyFact.TyBool();
-	static Ty Bool2Bool = tyFact.TyArr(Bool, Bool);
-	static Ty Bool2Bool2Bool = tyFact.TyArr(Bool2Bool, Bool);
-	static Term<Ty> x = tmFact.TmVar(0, 1);
-	static Term<Ty> t = tmFact.TmTrue();
-	static Term<Ty> f = tmFact.TmFalse();
-	static Term<Ty> t1 = tmFact.TmAbs("x", Bool, x);
-	static Term<Ty> fn = tmFact.TmAbs("x", tyFact.TyArr(Bool, Bool), tmFact.TmIf(tmFact.TmApp(x, f), t, f));
-	static Term<Ty> t2 = tmFact.TmApp(fn, tmFact.TmAbs("x", Bool, tmFact.TmIf(x, f, t)));
+	static CTy Bool = tyFact.TyBool();
+	static CTy Bool2Bool = tyFact.TyArr(Bool, Bool);
+	static CTy Bool2Bool2Bool = tyFact.TyArr(Bool2Bool, Bool);
+	static CTerm<CTy> x = tmFact.TmVar(0, 1);
+	static CTerm<CTy> t = tmFact.TmTrue();
+	static CTerm<CTy> f = tmFact.TmFalse();
+	static CTerm<CTy> t1 = tmFact.TmAbs("x", Bool, x);
+	static CTerm<CTy> fn = tmFact.TmAbs("x", tyFact.TyArr(Bool, Bool), tmFact.TmIf(tmFact.TmApp(x, f), t, f));
+	static CTerm<CTy> t2 = tmFact.TmApp(fn, tmFact.TmAbs("x", Bool, tmFact.TmIf(x, f, t)));
 
 	@Test
 	public void printTest() {

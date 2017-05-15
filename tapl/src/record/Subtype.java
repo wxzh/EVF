@@ -3,8 +3,6 @@ package record;
 import java.util.List;
 
 import library.Tuple2;
-import record.tyalg.external.TyAlgMatcher;
-import record.tyalg.shared.GTyAlg;
 import utils.ISubtype;
 
 public interface Subtype<Ty> extends GTyAlg<Ty, ISubtype<Ty>> {

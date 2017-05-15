@@ -1,7 +1,5 @@
 package typed;
 
-import typed.termalg.shared.GTermAlg;
-import typed.tyalg.external.TyAlgMatcher;
 import utils.Context;
 import utils.ITypeof;
 
