@@ -57,7 +57,6 @@ public class VisitProcessor extends AbstractProcessor {
             for (TypeElement element : ElementFilter.typesIn(internalAnnotated)) {
                 self = new ClassInfo(element);
                 genShared();
-//                genInternal();
                 genExternal();
             }
         } catch (IOException e) {
@@ -65,14 +64,6 @@ public class VisitProcessor extends AbstractProcessor {
         }
         return true;
     }
-
-//    private void setFolderAndPackage(String name) {
-////        String[] elements = { self.packageName, self.name.toLowerCase(), name };
-////        folder = String.join("/", elements);
-////        toPackage = String.join(".", elements);
-//        folder = self.packageName;
-//        toPackage = self.packageName;
-//    }
 
     private void genShared() throws IOException {
         genGeneralizedAlg();
@@ -247,14 +238,14 @@ public class VisitProcessor extends AbstractProcessor {
     private void genAlgMapperInterface() throws IOException {
         String name = thisWith(MAPPER);
         String content = declarePackage();
-        String tvarString = printTvars(self.joinUsedTvars(t -> I + t), O);
+        String tvarString = printTvars(self.joinUsedTvars(), O);
 
         content += "public interface " + name + tvarString;
         content += self.mapParents(" extends ",
-                parent -> qualifiedName(parent) + MAPPER + printTvars(parent.joinUsedTvars(t -> I + t), O));
+                parent -> qualifiedName(parent) + MAPPER + printTvars(parent.joinUsedTvars(), O));
         content += " {\n";
         content += self.joinMethodsWithNewline(method -> TAB
-                + method.substTypes(self.tvars::contains, t -> I + t).currying(O) + " " + method.name + MAPPER + "();");
+                + method.substTypes(self.tvars::contains, t -> t).currying(O) + " " + method.name + MAPPER + "();");
         content += "}";
 
         write(name, content);
@@ -302,16 +293,15 @@ public class VisitProcessor extends AbstractProcessor {
 
     private void genAlgApplierInterface() throws IOException {
         String content = declarePackage();
-        content += "public interface " + thisWith(APPLIER) + printTvars(self.joinTvars(t -> I + t), O) + " extends "
-                + qualifiedName(self, generalizedName(self)) + printTvars(self.joinTvarsAndLhsTvars(t -> I + t, t -> O));
+        content += "public interface " + thisWith(APPLIER) + printTvars(self.joinTvars(), O) + " extends "
+                + qualifiedName(self, generalizedName(self)) + printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O));
         content += self.mapParents(", ",
-                parent -> qualifiedName(parent) + APPLIER + printTvars(parent.joinTvars(t -> I + t), O));
+                parent -> qualifiedName(parent) + APPLIER + printTvars(parent.joinTvars(), O));
         content += " {\n";
-        content += TAB + thisWith(MAPPER) + printTvars(self.joinUsedTvars(t -> I + t), O) + " mapper();\n\n";
+        content += TAB + thisWith(MAPPER) + printTvars(self.joinUsedTvars(), O) + " mapper();\n\n";
         content += self
                 .joinMethodsWithNewline(method -> TAB + "default " + O + " "
-                        + method.substTypes(self.tvars::contains,
-                                t -> I + t)
+                        + method.substTypes(self.tvars::contains, t -> t)
                         + " {\n" + TAB2 + "return mapper()." + method.name + MAPPER + "()"
                         + (method.genArgs.size() == 0 ? ".get()"
                                 : method.genArgs.stream().map(arg -> ".apply(" + arg + ")")
@@ -334,17 +324,17 @@ public class VisitProcessor extends AbstractProcessor {
 
     private void genAlgMatcherInterface() throws IOException {
         String content = declarePackage();
-        String tvarString = printTvars(self.joinTvars(t -> I + t), O);
+        String tvarString = printTvars(self.joinTvars(), O);
         content += "public interface " + thisWith(MATCHER) + tvarString + " extends " + thisWith(MAPPER)
-                + printTvars(self.joinUsedTvars(t -> I + t), O);
+                + printTvars(self.joinUsedTvars(), O);
         content += self.mapParents(", ",
-                parent -> qualifiedName(parent) + MATCHER + printTvars(parent.joinTvars(t -> I + t), O));
+                parent -> qualifiedName(parent) + MATCHER + printTvars(parent.joinTvars(), O));
         content += " {\n";
         content += self.joinAllMethodsWithNewline(method -> TAB + thisWith(MATCHER) + tvarString + " " + method.name
-                + "(" + method.substTypes(self.tvars::contains, t -> I + t).currying(O) + " " + method.name + ");");
+                + "(" + method.substTypes(self.tvars::contains, t -> t).currying(O) + " " + method.name + ");");
         content += "\n";
         content += TAB + qualifiedName(self, generalizedName(self))
-                + printTvars(self.joinTvarsAndLhsTvars(t -> I + t, t -> O)) + " otherwise(java.util.function.Supplier"
+                + printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> O)) + " otherwise(java.util.function.Supplier"
                 + _O_ + " Otherwise);\n";
         content += "}\n";
 

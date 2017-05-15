@@ -30,7 +30,6 @@ class ClassInfo {
 	public final List<ClassInfo> parents;
 	public final List<String> tvars;
 
-	public final String I = "I";
 	public final String O = "O";
 
 	public List<String> getNewLhsTvars() {
@@ -80,9 +79,9 @@ class ClassInfo {
 		return mapThenJoin(tvars, f, ", ", "", "");
 	}
 
-	public String joinTvarsAndLhsTvars() {
-		return joinTvarsAndLhsTvars(t -> I + t, t -> O + t);
-	}
+//	public String joinTvarsAndLhsTvars() {
+//		return joinTvarsAndLhsTvars(t -> I + t, t -> O + t);
+//	}
 
 	public String joinTvarsAndLhsTvars(Function<String, String> f1, Function<String, String> f2) {
 		return Stream.concat(tvars.stream().map(f1), lhsTvars.stream().map(f2)).collect(Collectors.joining(", "));
