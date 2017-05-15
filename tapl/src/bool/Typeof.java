@@ -2,11 +2,10 @@ package bool;
 
 import bool.termalg.shared.GTermAlg;
 import bool.tyalg.external.TyAlgMatcher;
-import bool.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
-	GTyAlg<Ty, Ty> tyAlg();
+	TyAlg<Ty> tyAlg();
 	TyAlgMatcher<Ty, Ty> tyMatcher();
 
 	@Override default ITypeof<Ty, Bind> TmIf(Term t1, Term t2, Term t3) {

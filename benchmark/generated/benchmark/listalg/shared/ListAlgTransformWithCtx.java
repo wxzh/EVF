@@ -1,7 +1,7 @@
 package benchmark.listalg.shared;
 
 public interface ListAlgTransformWithCtx<O, List> extends benchmark.listalg.shared.GListAlg<List, java.util.function.Function<O, List>> {
-	benchmark.listalg.shared.GListAlg<List, List> alg();
+	benchmark.ListAlg<List> alg();
 
 	default java.util.function.Function<O, List> Nil() {
 		return c -> alg().Nil();

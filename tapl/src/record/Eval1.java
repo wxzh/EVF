@@ -8,7 +8,7 @@ import record.termalg.external.TermAlgMatcher;
 import record.termalg.shared.GTermAlg;
 
 public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
-	GTermAlg<Term, Term> alg();
+	TermAlg<Term> alg();
 	TermAlgMatcher<Term, Term> matcher();
 	boolean isVal(Term t);
 

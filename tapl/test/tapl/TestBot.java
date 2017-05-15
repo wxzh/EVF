@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import bot.PrintTy;
 import bot.Subtype;
+import bot.TyAlg;
 import bot.TyEqv;
 import bot.Typeof;
 import bot.tyalg.external.Ty;
@@ -17,23 +18,22 @@ import bot.tyalg.external.TyAlgFactory;
 import bot.tyalg.external.TyAlgMatcher;
 import bot.tyalg.external.TyAlgMatcherImpl;
 import bot.tyalg.external.TyAlgVisitor;
-import bot.tyalg.shared.GTyAlg;
+import typed.BindingAlg;
 import typed.Eval1;
 import typed.GetTypeFromBind;
 import typed.IsVal;
 import typed.Print;
 import typed.PrintBind;
+import typed.TermAlg;
 import typed.TmMap;
 import typed.bindingalg.external.Bind;
 import typed.bindingalg.external.BindingAlgFactory;
 import typed.bindingalg.external.BindingAlgVisitor;
-import typed.bindingalg.shared.GBindingAlg;
 import typed.termalg.external.Term;
 import typed.termalg.external.TermAlgFactory;
 import typed.termalg.external.TermAlgMatcher;
 import typed.termalg.external.TermAlgMatcherImpl;
 import typed.termalg.external.TermAlgVisitor;
-import typed.termalg.shared.GTermAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -88,16 +88,16 @@ public class TestBot {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		@Override public GTyAlg<Ty, Ty> tyAlg() {
+		@Override public TyAlg<Ty> tyAlg() {
 			return tyFact;
 		}
-		@Override public GBindingAlg<Bind<Ty>, Ty, Bind<Ty>> bindAlg() {
+		@Override public BindingAlg<Bind<Ty>, Ty> bindAlg() {
 		  return bindFact;
 		}
 	}
 
 	class Eval1Impl implements Eval1<Term<Ty>, Ty>, TermAlgVisitor<Term<Ty>, Ty> {
-    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+    public TermAlg<Term<Ty>, Ty> alg() {
       return tmFact;
     }
     @Override public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
@@ -123,7 +123,7 @@ public class TestBot {
 	class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 
 	class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-	  @Override public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  @Override public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	}

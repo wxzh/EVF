@@ -2,12 +2,11 @@ package fullerror;
 
 import fullerror.termalg.shared.GTermAlg;
 import fullerror.tyalg.external.TyAlgMatcher;
-import fullerror.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, simplebool.Typeof<Term, Ty, Bind>, bot.Typeof<Term, Ty, Bind> {
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
-	@Override GTyAlg<Ty, Ty> tyAlg();
+	@Override TyAlg<Ty> tyAlg();
 	Ty join(Ty ty1, Ty ty2);
 
 	@Override default ITypeof<Ty, Bind> TmError() {

@@ -14,6 +14,7 @@ import arith.termalg.external.TermAlgVisitor;
 import tapl.TestArith.Eval1Impl;
 import tapl.TestArith.PrintImpl;
 import tyarith.PrintTy;
+import tyarith.TyAlg;
 import tyarith.TyEqv;
 import tyarith.Typeof;
 import tyarith.tyalg.external.Ty;
@@ -21,7 +22,6 @@ import tyarith.tyalg.external.TyAlgFactory;
 import tyarith.tyalg.external.TyAlgMatcher;
 import tyarith.tyalg.external.TyAlgMatcherImpl;
 import tyarith.tyalg.external.TyAlgVisitor;
-import tyarith.tyalg.shared.GTyAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -52,7 +52,7 @@ public class TestTyArith {
 	  public boolean tyEqv(Ty ty1, Ty ty2) {
 	    return new TyEqvImpl().visitTy(ty1).tyEqv(ty2);
 	  }
-	  public GTyAlg<Ty, Ty> tyAlg() {
+	  public TyAlg<Ty> tyAlg() {
 	    return tyFact;
 	  }
 	  public TyAlgMatcher<Ty, Ty> tyMatcher() {

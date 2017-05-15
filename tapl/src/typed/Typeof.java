@@ -1,16 +1,14 @@
 package typed;
 
-import typed.bindingalg.shared.GBindingAlg;
 import typed.termalg.shared.GTermAlg;
 import typed.tyalg.external.TyAlgMatcher;
-import typed.tyalg.shared.GTyAlg;
 import utils.Context;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
-	GTyAlg<Ty, Ty> tyAlg();
+	TyAlg<Ty> tyAlg();
 	TyAlgMatcher<Ty, Ty> tyMatcher();
-	GBindingAlg<Bind, Ty, Bind> bindAlg();
+	BindingAlg<Bind, Ty> bindAlg();
 	Ty getTypeFromBind(Bind bind);
 
 	@Override default ITypeof<Ty, Bind> TmApp(Term t1, Term t2) {

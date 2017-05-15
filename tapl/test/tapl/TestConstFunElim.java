@@ -6,6 +6,7 @@ import java.util.function.Function;
 import untyped.ConstFunElim;
 import untyped.GetBodyFromTmAbs;
 import untyped.IsVarUsed;
+import untyped.TermAlg;
 import untyped.TmMap;
 import untyped.termalg.external.Term;
 import untyped.termalg.external.TermAlgFactory;
@@ -29,7 +30,7 @@ public class TestConstFunElim {
   static class GetBodyFromTmAbsImpl implements GetBodyFromTmAbs<Term>, TermAlgVisitor<Optional<Term>> {}
   static class IsVarUsedImpl implements IsVarUsed<Term>, TermAlgVisitor<Function<Integer,Boolean>> {}
   static class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
-    public GTermAlg<Term, Term> alg() {
+    public TermAlg<Term> alg() {
         return new TermAlgFactory();
     }
   }
@@ -40,7 +41,7 @@ public class TestConstFunElim {
     public Optional<Term> getBodyFromTmAbs(Term t) {
       return new GetBodyFromTmAbsImpl().visitTerm(t);
     }
-    public untyped.termalg.shared.GTermAlg<Term, Term> alg() {
+    public TermAlg<Term> alg() {
         return new TermAlgFactory();
     }
     @Override public Term termShift(int d, Term t) {

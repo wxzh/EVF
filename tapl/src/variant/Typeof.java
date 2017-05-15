@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import library.Tuple3;
-import typed.bindingalg.shared.GBindingAlg;
+import typed.BindingAlg;
 import utils.ITypeof;
 import variant.termalg.shared.GTermAlg;
 import variant.tyalg.external.TyAlgMatcher;
-import variant.tyalg.shared.GTyAlg;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
-	GTyAlg<Ty, Ty> tyAlg();
-	GBindingAlg<Bind, Ty, Bind> bindAlg();
+	TyAlg<Ty> tyAlg();
+	BindingAlg<Bind, Ty> bindAlg();
 	TyAlgMatcher<Ty, Ty> tyMatcher();
 
 	@Override default ITypeof<Ty, Bind> TmTag(String l, Term t, Ty ty) {

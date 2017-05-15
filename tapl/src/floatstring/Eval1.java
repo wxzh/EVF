@@ -5,7 +5,7 @@ import floatstring.termalg.shared.GTermAlg;
 
 public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
 	TermAlgMatcher<Term, Term> matcher();
-	GTermAlg<Term, Term> alg();
+	TermAlg<Term> alg();
 
 	default Term TmTimesFloat(Term t1, Term t2) {
 		return matcher()

@@ -1,6 +1,6 @@
 package benchmark.listalg.internal;
 
-public class ListAlgFactory implements ListAlgVisitor<List> {
+public class ListAlgFactory implements benchmark.ListAlg<List> {
 	public List Nil() {
 		return new List() {
 			public <OList> OList accept(ListAlgVisitor<OList> v) {

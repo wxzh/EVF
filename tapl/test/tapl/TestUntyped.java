@@ -9,13 +9,13 @@ import org.junit.Test;
 import untyped.Eval1;
 import untyped.IsVal;
 import untyped.Print;
+import untyped.TermAlg;
 import untyped.TmMap;
 import untyped.termalg.external.Term;
 import untyped.termalg.external.TermAlgFactory;
 import untyped.termalg.external.TermAlgMatcher;
 import untyped.termalg.external.TermAlgMatcherImpl;
 import untyped.termalg.external.TermAlgVisitor;
-import untyped.termalg.shared.GTermAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -37,7 +37,7 @@ public class TestUntyped {
 	class IsValImpl implements IsVal<Term>, TermAlgVisitor<Boolean> {}
 
   class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
-    @Override public GTermAlg<Term, Term> alg() {
+    @Override public TermAlg<Term> alg() {
       return fact;
     }
   }
@@ -49,7 +49,7 @@ public class TestUntyped {
 		@Override public boolean isVal(Term e) {
 			return isVal.visitTerm(e);
 		}
-		@Override public GTermAlg<Term, Term> alg() {
+		@Override public TermAlg<Term> alg() {
 			return fact;
 		}
 		@Override public TermAlgMatcher<Term, Term> matcher() {

@@ -7,7 +7,7 @@ import variant.termalg.external.TermAlgMatcher;
 import variant.termalg.shared.GTermAlg;
 
 public interface Eval1<Term, Ty> extends GTermAlg<Term, Ty, Term>, utils.Eval1<Term> {
-	GTermAlg<Term, Ty, Term> alg();
+	TermAlg<Term, Ty> alg();
 	TermAlgMatcher<Term, Ty, Term> matcher();
 
   Term termSubstTop(Term s, Term t);

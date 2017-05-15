@@ -6,11 +6,10 @@ import java.util.stream.Collectors;
 import library.Tuple2;
 import record.termalg.shared.GTermAlg;
 import record.tyalg.external.TyAlgMatcher;
-import record.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
-	GTyAlg<Ty, Ty> tyAlg();
+	TyAlg<Ty> tyAlg();
 	TyAlgMatcher<Ty, Ty> tyMatcher();
 
 	@Override default ITypeof<Ty, Bind> TmRecord(List<Tuple2<String, Term>> fields) {

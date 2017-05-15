@@ -2,12 +2,11 @@ package fullref;
 
 import fullref.termalg.shared.GTermAlg;
 import fullref.tyalg.external.TyAlgMatcher;
-import fullref.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>, bot.Typeof<Term, Ty, Bind>, fullsub.Typeof<Term, Ty, Bind>, variant.Typeof<Term, Ty, Bind> {
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
-	@Override GTyAlg<Ty, Ty> tyAlg();
+	@Override TyAlg<Ty> tyAlg();
 
 	@Override default ITypeof<Ty, Bind> TmRef(Term t) {
 		return ctx -> tyAlg().TyRef(visitTerm(t).typeof(ctx));

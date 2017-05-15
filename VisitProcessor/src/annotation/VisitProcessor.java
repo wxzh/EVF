@@ -144,7 +144,6 @@ public class VisitProcessor extends AbstractProcessor {
         internal = false;
         genCommon();
         genPatternMatching();
-//        genParser();
     }
 
     private void genCommon() throws IOException {
@@ -188,13 +187,17 @@ public class VisitProcessor extends AbstractProcessor {
                 + nameInShared(self, generalizedName(self)) + tvarString;
         content += self.mapParents(", ", parent -> nameInShared(parent) + TRANSFORM + printTvars(parent.joinTvars()));
         content += " {\n";
-        content += TAB + nameInShared(self, generalizedName(self)) + tvarString + " alg();\n\n";
+        content += factoryDependency() + "\n";
         content += self.joinMethodsWithNewline(method -> TAB + "default " + method.returnType + " " + method + " {\n"
                 + TAB2 + "return alg()." + method.name + "("
                 + method.mapArgs((tvar, arg) -> "visit" + tvar + "(" + arg + ")") + ");\n" + TAB + "}\n");
         content += "}";
 
         write(name, content);
+    }
+
+    private String factoryDependency() {
+      return TAB + self.packageName + "." + self.name + printTvars(self.joinTvars()) + " alg();\n";
     }
 
     private void genAlgContextualTransformInterface() throws IOException {
@@ -208,8 +211,7 @@ public class VisitProcessor extends AbstractProcessor {
         content += self.mapParents(", ",
                 parent -> nameInShared(parent, parent.name) + TRANSFORM + "WithCtx" + printTvars(O, parent.joinTvars()));
         content += " {\n";
-        content += TAB + nameInShared(self, generalizedName(self))
-                + printTvars(self.joinTvarsAndLhsTvars(t -> t, t -> t)) + " alg();\n\n";
+        content += factoryDependency() + "\n";
         content += self.joinMethodsWithNewline(method -> TAB + "default " + method.substReturnType(toFun) + " " + method
                 + " {\n" + TAB2 + "return c -> alg()." + method.name + "("
                 + method.mapArgs((tvar, arg) -> "visit" + tvar + "(" + arg + ").apply(c)") + ");\n" + TAB + "}\n");
@@ -221,10 +223,10 @@ public class VisitProcessor extends AbstractProcessor {
     private void genAlgFactory() throws IOException {
         String name = thisWith(FACTORY);
         String tvarString = printTvars(self.joinRhsTvars());
-        String visitorToMixin = self.name + VISITOR + printTvars(self.joinTvars(this::thisLhsTvarWithElement));
+        String alg = self.packageName + "." + self.name + printTvars(self.joinTvars(this::thisLhsTvarWithElement));
 
         String content = declarePackage();
-        content += "public class " + name + tvarString + " implements " + visitorToMixin + " {\n";
+        content += "public class " + name + tvarString + " implements " + alg + " {\n";
         content += self.joinAllMethodsWithNewline(this::genConstructor);
         content += "}";
 

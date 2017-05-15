@@ -15,7 +15,9 @@ import fullref.Print;
 import fullref.PrintTy;
 import fullref.Store;
 import fullref.Subtype;
+import fullref.TermAlg;
 import fullref.TmMap;
+import fullref.TyAlg;
 import fullref.TyEqv;
 import fullref.Typeof;
 import fullref.termalg.external.Term;
@@ -23,20 +25,18 @@ import fullref.termalg.external.TermAlgFactory;
 import fullref.termalg.external.TermAlgMatcher;
 import fullref.termalg.external.TermAlgMatcherImpl;
 import fullref.termalg.external.TermAlgVisitor;
-import fullref.termalg.shared.GTermAlg;
 import fullref.tyalg.external.Ty;
 import fullref.tyalg.external.TyAlgFactory;
 import fullref.tyalg.external.TyAlgMatcher;
 import fullref.tyalg.external.TyAlgMatcherImpl;
 import fullref.tyalg.external.TyAlgVisitor;
-import fullref.tyalg.shared.GTyAlg;
+import fullsimple.BindingAlg;
 import fullsimple.GetTypeFromBind;
 import fullsimple.PrintBind;
 import fullsimple.bindingalg.external.Bind;
 import fullsimple.bindingalg.external.BindingAlgFactory;
 import fullsimple.bindingalg.external.BindingAlgVisitor;
 import library.Tuple2;
-import typed.bindingalg.shared.GBindingAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IJoin;
@@ -76,7 +76,7 @@ public class TestFullref {
 	}
 
 	class Eval1Impl implements Eval1<Term<Ty>,Ty,Bind<Term<Ty>,Ty>>, TermAlgVisitor<Term<Ty>,Ty> {
-	  @Override public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  @Override public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	  @Override public boolean isNumericVal(Term<Ty> t) {
@@ -101,7 +101,7 @@ public class TestFullref {
 	class IsNumericValImpl implements IsNumericVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean,Ty> {}
 
   class TmMapImpl implements TmMap<Term<Ty>,Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+    public TermAlg<Term<Ty>, Ty> alg() {
       return tmFact;
     }
   }
@@ -110,7 +110,7 @@ public class TestFullref {
     public boolean tyEqv(Ty ty1, Ty ty2) {
       return new TyEqvImpl().visitTy(ty1).tyEqv(ty2);
     }
-    public GBindingAlg<Bind<Term<Ty>, Ty>, Ty, Bind<Term<Ty>, Ty>> bindAlg() {
+    public BindingAlg<Bind<Term<Ty>, Ty>, Term<Ty>, Ty> bindAlg() {
       return new BindingAlgFactory<>();
     }
     public Ty getTypeFromBind(Bind<Term<Ty>, Ty> bind) {
@@ -119,7 +119,7 @@ public class TestFullref {
     public boolean subtype(Ty ty1, Ty ty2) {
       return new SubtypeImpl().subtype(ty1, ty2);
     }
-    public GTyAlg<Ty, Ty> tyAlg() {
+    public TyAlg<Ty> tyAlg() {
       return new TyAlgFactory();
     }
     public TyAlgMatcher<Ty, Ty> tyMatcher() {
@@ -156,7 +156,7 @@ public class TestFullref {
     public TyAlgMatcher<Ty, Ty> matcher() {
       return new TyAlgMatcherImpl<>();
     }
-    public GTyAlg<Ty, Ty> alg() {
+    public TyAlg<Ty> alg() {
       return new TyAlgFactory();
     }
   }

@@ -14,6 +14,7 @@ import fulluntyped.Eval1;
 import fulluntyped.IsNumericVal;
 import fulluntyped.Print;
 import fulluntyped.PrintBind;
+import fulluntyped.TermAlg;
 import fulluntyped.TmMap;
 import fulluntyped.bindingalg.external.Bind;
 import fulluntyped.bindingalg.external.BindingAlgFactory;
@@ -25,7 +26,6 @@ import fulluntyped.termalg.external.TermAlgFactory;
 import fulluntyped.termalg.external.TermAlgMatcher;
 import fulluntyped.termalg.external.TermAlgMatcherImpl;
 import fulluntyped.termalg.external.TermAlgVisitor;
-import fulluntyped.termalg.shared.GTermAlg;
 import library.Tuple2;
 import utils.Context;
 import utils.Eval;
@@ -54,7 +54,7 @@ public class TestFulluntyped {
 	class IsValImpl implements fulluntyped.IsVal<Term>, TermAlgVisitor<Boolean> {}
 
   class TmMapImpl implements TmMap<Term>, TermAlgVisitor<Function<TmMapCtx<Term>, Term>> {
-    public GTermAlg<Term, Term> alg() {
+    public TermAlg<Term> alg() {
       return fact;
     }
   }
@@ -76,7 +76,7 @@ public class TestFulluntyped {
 			return new BindingAlgMatcherImpl<>();
 		}
 
-		@Override public GTermAlg<Term, Term> alg() {
+		@Override public TermAlg<Term> alg() {
 			return fact;
 		}
 

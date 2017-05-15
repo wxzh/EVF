@@ -7,7 +7,7 @@ import utils.Context;
 
 public interface Eval1<Term, Bind> extends GTermAlg<Term, Term>, untyped.Eval1<Term>, extension.Eval1<Term, Bind> {
 	@Override TermAlgMatcher<Term, Term> matcher();
-	@Override GTermAlg<Term, Term> alg();
+	@Override TermAlg<Term> alg();
 	BindingAlgMatcher<Bind, Term, Term> bindMatcher();
 	Context<Bind> ctx();
 

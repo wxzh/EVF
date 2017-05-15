@@ -1,6 +1,6 @@
 package pkg.alg.external;
 
-public class AlgFactory implements AlgVisitor<Exp> {
+public class AlgFactory implements pkg.Alg<Exp> {
 	public Exp Add(Exp p1, Exp p2) {
 		return new Exp() {
 			public <OExp> OExp accept(AlgVisitor<OExp> v) {

@@ -1,12 +1,11 @@
 package bot;
 
 import bot.tyalg.external.TyAlgMatcher;
-import bot.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends top.Typeof<Term, Ty, Bind> {
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
-	@Override GTyAlg<Ty, Ty> tyAlg();
+	@Override TyAlg<Ty> tyAlg();
 
 	@Override default ITypeof<Ty, Bind> TmApp(Term t1, Term t2) {
 		return ctx -> {

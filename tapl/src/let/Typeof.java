@@ -1,11 +1,11 @@
 package let;
 
 import let.termalg.shared.GTermAlg;
-import typed.bindingalg.shared.GBindingAlg;
+import typed.BindingAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>> {
-	GBindingAlg<Bind,Ty,Bind> bindAlg();
+	BindingAlg<Bind,Ty> bindAlg();
 
 	@Override default ITypeof<Ty, Bind> TmLet(String x, Term t1, Term t2) {
 		return ctx -> {

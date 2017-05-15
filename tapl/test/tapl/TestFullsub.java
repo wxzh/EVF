@@ -9,12 +9,12 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import fullsimple.BindingAlg;
 import fullsimple.GetTypeFromBind;
 import fullsimple.PrintBind;
 import fullsimple.bindingalg.external.Bind;
 import fullsimple.bindingalg.external.BindingAlgFactory;
 import fullsimple.bindingalg.external.BindingAlgVisitor;
-import fullsimple.bindingalg.shared.GBindingAlg;
 import fullsub.Eval1;
 import fullsub.IsNumericVal;
 import fullsub.IsVal;
@@ -22,7 +22,9 @@ import fullsub.JoinMeet;
 import fullsub.Print;
 import fullsub.PrintTy;
 import fullsub.Subtype;
+import fullsub.TermAlg;
 import fullsub.TmMap;
+import fullsub.TyAlg;
 import fullsub.TyEqv;
 import fullsub.Typeof;
 import fullsub.termalg.external.Term;
@@ -30,13 +32,11 @@ import fullsub.termalg.external.TermAlgFactory;
 import fullsub.termalg.external.TermAlgMatcher;
 import fullsub.termalg.external.TermAlgMatcherImpl;
 import fullsub.termalg.external.TermAlgVisitor;
-import fullsub.termalg.shared.GTermAlg;
 import fullsub.tyalg.external.Ty;
 import fullsub.tyalg.external.TyAlgFactory;
 import fullsub.tyalg.external.TyAlgMatcher;
 import fullsub.tyalg.external.TyAlgMatcherImpl;
 import fullsub.tyalg.external.TyAlgVisitor;
-import fullsub.tyalg.shared.GTyAlg;
 import library.Tuple2;
 import utils.Context;
 import utils.Eval;
@@ -58,7 +58,7 @@ public class TestFullsub {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		@Override public GTyAlg<Ty, Ty> alg() {
+		@Override public TyAlg<Ty> alg() {
 			return new TyAlgFactory();
 		}
 
@@ -111,7 +111,7 @@ public class TestFullsub {
 	    return joinMeet.join(ty1, ty2);
 	  }
 
-		public GBindingAlg<Bind<Term<Ty>,Ty>, Term<Ty>, Ty, Bind<Term<Ty>,Ty>> bindAlg() {
+		public BindingAlg<Bind<Term<Ty>,Ty>, Term<Ty>, Ty> bindAlg() {
 			return bindFact;
 		}
 
@@ -129,7 +129,7 @@ public class TestFullsub {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		public GTyAlg<Ty, Ty> tyAlg() {
+		public TyAlg<Ty> tyAlg() {
 			return tyFact;
 		}
 
@@ -145,7 +145,7 @@ public class TestFullsub {
 	  public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
 	    return new TermAlgMatcherImpl<>();
 	  }
-	  public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	  public Term<Ty> termSubstTop(Term<Ty> s, Term<Ty> t) {
@@ -166,7 +166,7 @@ public class TestFullsub {
 	class IsNumericValImpl implements IsNumericVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 	class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 	class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-	  public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	}

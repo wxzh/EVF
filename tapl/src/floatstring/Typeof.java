@@ -2,12 +2,11 @@ package floatstring;
 
 import floatstring.termalg.shared.GTermAlg;
 import floatstring.tyalg.external.TyAlgMatcher;
-import floatstring.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, ITypeof<Ty, Bind>>, utils.Typeof<Ty> {
 	TyAlgMatcher<Ty, Ty> tyMatcher();
-	GTyAlg<Ty, Ty> tyAlg();
+	TyAlg<Ty> tyAlg();
 
 	@Override default ITypeof<Ty, Bind> TmTimesFloat(Term t1, Term t2) {
 		return ctx -> {

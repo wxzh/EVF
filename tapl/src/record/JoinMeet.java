@@ -8,14 +8,13 @@ import java.util.stream.Stream;
 
 import library.Tuple2;
 import record.tyalg.external.TyAlgMatcher;
-import record.tyalg.shared.GTyAlg;
 import record.tyalg.shared.TyAlgDefault;
 import utils.IJoin;
 import utils.IMeet;
 
 public interface JoinMeet<Ty> extends utils.JoinMeet<Ty>{
 	TyAlgMatcher<Ty, Ty> matcher();
-	GTyAlg<Ty, Ty> alg();
+	TyAlg<Ty> alg();
 
   interface Join<Ty> extends TyAlgDefault<Ty, IJoin<Ty>>, JoinMeet<Ty> {
     @Override default IJoin<Ty> TyRecord(List<Tuple2<String, Ty>> fS) {

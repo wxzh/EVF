@@ -10,12 +10,12 @@ import arith.Eval1;
 import arith.IsNumericVal;
 import arith.IsVal;
 import arith.Print;
+import arith.TermAlg;
 import arith.termalg.external.Term;
 import arith.termalg.external.TermAlgFactory;
 import arith.termalg.external.TermAlgMatcher;
 import arith.termalg.external.TermAlgMatcherImpl;
 import arith.termalg.external.TermAlgVisitor;
-import arith.termalg.shared.GTermAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -36,7 +36,7 @@ public class TestArith {
 	}
 
 	static class Eval1Impl implements Eval1<Term>, TermAlgVisitor<Term> {
-		public GTermAlg<Term, Term> alg() {
+		public TermAlg<Term> alg() {
 			return alg;
 		}
 

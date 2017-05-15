@@ -1,7 +1,6 @@
 package fullref;
 
 import fullref.tyalg.external.TyAlgMatcher;
-import fullref.tyalg.shared.GTyAlg;
 import fullref.tyalg.shared.TyAlgDefault;
 import library.Zero;
 import utils.IJoin;
@@ -9,7 +8,7 @@ import utils.IMeet;
 
 public interface JoinMeet<Ty> extends bot.JoinMeet<Ty>, fullsub.JoinMeet<Ty> {
 	@Override TyAlgMatcher<Ty, Ty> matcher();
-	@Override GTyAlg<Ty, Ty> alg();
+	@Override TyAlg<Ty> alg();
 
   interface Join<Ty> extends TyAlgDefault<Ty, IJoin<Ty>>, JoinMeet<Ty>, bot.JoinMeet.Join<Ty>, fullsub.JoinMeet.Join<Ty> {
     default IJoin<Ty> TyRef(Ty ty1) {

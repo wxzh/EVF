@@ -5,7 +5,7 @@ import moreextension.termalg.shared.GTermAlg;
 
 public interface Eval1<Term, Ty, Bind> extends GTermAlg<Term, Ty, Term>, extension.Eval1<Term, Bind> {
 	@Override TermAlgMatcher<Term, Ty, Term> matcher();
-	@Override GTermAlg<Term, Ty, Term> alg();
+	@Override TermAlg<Term, Ty> alg();
 
 	default Term TmAscribe(Term t, Ty ty) {
 		return isVal(t) ? t : alg().TmAscribe(visitTerm(t), ty);

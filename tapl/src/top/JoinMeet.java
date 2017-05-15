@@ -2,13 +2,12 @@ package top;
 
 import library.Zero;
 import top.tyalg.external.TyAlgMatcher;
-import top.tyalg.shared.GTyAlg;
 import top.tyalg.shared.TyAlgDefault;
 import utils.IJoin;
 import utils.IMeet;
 
 public interface JoinMeet<Ty> extends utils.JoinMeet<Ty> {
-	GTyAlg<Ty, Ty> alg();
+	TyAlg<Ty> alg();
   TyAlgMatcher<Ty, Ty> matcher();
 
   interface Join<Ty> extends TyAlgDefault<Ty, IJoin<Ty>>, JoinMeet<Ty> {

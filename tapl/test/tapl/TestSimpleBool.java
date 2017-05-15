@@ -12,7 +12,9 @@ import simplebool.Eval1;
 import simplebool.IsVal;
 import simplebool.Print;
 import simplebool.PrintTy;
+import simplebool.TermAlg;
 import simplebool.TmMap;
+import simplebool.TyAlg;
 import simplebool.TyEqv;
 import simplebool.Typeof;
 import simplebool.termalg.external.Term;
@@ -20,19 +22,17 @@ import simplebool.termalg.external.TermAlgFactory;
 import simplebool.termalg.external.TermAlgMatcher;
 import simplebool.termalg.external.TermAlgMatcherImpl;
 import simplebool.termalg.external.TermAlgVisitor;
-import simplebool.termalg.shared.GTermAlg;
 import simplebool.tyalg.external.Ty;
 import simplebool.tyalg.external.TyAlgFactory;
 import simplebool.tyalg.external.TyAlgMatcher;
 import simplebool.tyalg.external.TyAlgMatcherImpl;
 import simplebool.tyalg.external.TyAlgVisitor;
-import simplebool.tyalg.shared.GTyAlg;
+import typed.BindingAlg;
 import typed.GetTypeFromBind;
 import typed.PrintBind;
 import typed.bindingalg.external.Bind;
 import typed.bindingalg.external.BindingAlgFactory;
 import typed.bindingalg.external.BindingAlgVisitor;
-import typed.bindingalg.shared.GBindingAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -58,7 +58,7 @@ public class TestSimpleBool {
 	}
 
 	static class Eval1Impl implements Eval1<Term<Ty>,Ty>, TermAlgVisitor<Term<Ty>,Ty> {
-		public GTermAlg<Term<Ty>,Ty,Term<Ty>> alg() {
+		public TermAlg<Term<Ty>,Ty> alg() {
 			return tmFact;
 		}
 
@@ -74,7 +74,7 @@ public class TestSimpleBool {
 	}
 
   static class TmMapImpl implements TmMap<Term<Ty>,Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>, Term<Ty>>, Ty> {
-    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+    public TermAlg<Term<Ty>, Ty> alg() {
       return tmFact;
     }
   }
@@ -93,13 +93,13 @@ public class TestSimpleBool {
 	  public boolean tyEqv(Ty ty1, Ty ty2) {
 	    return tyEqv.visitTy(ty1).tyEqv(ty2);
 	  }
-	  public GBindingAlg<Bind<Ty>, Ty, Bind<Ty>> bindAlg() {
+	  public BindingAlg<Bind<Ty>, Ty> bindAlg() {
 	    return bindFact;
 	  }
 	  public Ty getTypeFromBind(Bind<Ty> bind) {
 	    return new GetTypeFromBindImpl().visitBind(bind);
 	  }
-	  public GTyAlg<Ty, Ty> tyAlg() {
+	  public TyAlg<Ty> tyAlg() {
 	    return tyFact;
 	  }
 	  public TyAlgMatcher<Ty, Ty> tyMatcher() {

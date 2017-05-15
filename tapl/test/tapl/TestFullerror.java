@@ -13,7 +13,9 @@ import fullerror.JoinMeet;
 import fullerror.Print;
 import fullerror.PrintTy;
 import fullerror.Subtype;
+import fullerror.TermAlg;
 import fullerror.TmMap;
+import fullerror.TyAlg;
 import fullerror.TyEqv;
 import fullerror.Typeof;
 import fullerror.termalg.external.Term;
@@ -21,19 +23,17 @@ import fullerror.termalg.external.TermAlgFactory;
 import fullerror.termalg.external.TermAlgMatcher;
 import fullerror.termalg.external.TermAlgMatcherImpl;
 import fullerror.termalg.external.TermAlgVisitor;
-import fullerror.termalg.shared.GTermAlg;
 import fullerror.tyalg.external.Ty;
 import fullerror.tyalg.external.TyAlgFactory;
 import fullerror.tyalg.external.TyAlgMatcher;
 import fullerror.tyalg.external.TyAlgMatcherImpl;
 import fullerror.tyalg.external.TyAlgVisitor;
-import fullerror.tyalg.shared.GTyAlg;
+import fullsimple.BindingAlg;
 import fullsimple.GetTypeFromBind;
 import fullsimple.PrintBind;
 import fullsimple.bindingalg.external.Bind;
 import fullsimple.bindingalg.external.BindingAlgFactory;
 import fullsimple.bindingalg.external.BindingAlgVisitor;
-import fullsimple.bindingalg.shared.GBindingAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IJoin;
@@ -87,7 +87,7 @@ public class TestFullerror {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		@Override public GTyAlg<Ty, Ty> alg() {
+		@Override public TyAlg<Ty> alg() {
 			return tyFact;
 		}
 
@@ -113,10 +113,10 @@ public class TestFullerror {
     public Ty getTypeFromBind(Bind<Term<Ty>,Ty> bind) {
       return new GetTypeFromBindImpl().visitBind(bind);
     }
-		public GBindingAlg<Bind<Term<Ty>,Ty>,Term<Ty>,Ty,Bind<Term<Ty>,Ty>> bindAlg() {
+		public BindingAlg<Bind<Term<Ty>,Ty>,Term<Ty>,Ty> bindAlg() {
 			return bindFact;
 		}
-		public GTyAlg<Ty, Ty> tyAlg() {
+		public TyAlg<Ty> tyAlg() {
 			return tyFact;
 		}
 		public boolean tyEqv(Ty ty1, Ty ty2) {
@@ -131,7 +131,7 @@ public class TestFullerror {
 	    public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
 	      return new TermAlgMatcherImpl<>();
 	    }
-	    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	    public TermAlg<Term<Ty>, Ty> alg() {
 	      return tmFact;
 	    }
 	    public Term<Ty> termSubstTop(Term<Ty> s, Term<Ty> t) {
@@ -151,7 +151,7 @@ public class TestFullerror {
 	  }
 	  class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 	  class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-	    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	    public TermAlg<Term<Ty>, Ty> alg() {
 	      return tmFact;
 	    }
 	  }

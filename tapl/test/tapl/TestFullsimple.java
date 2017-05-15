@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import fullsimple.BindingAlg;
 import fullsimple.Eval1;
 import fullsimple.GetTypeFromBind;
 import fullsimple.IsNumericVal;
@@ -17,25 +18,24 @@ import fullsimple.IsVal;
 import fullsimple.Print;
 import fullsimple.PrintBind;
 import fullsimple.PrintTy;
+import fullsimple.TermAlg;
 import fullsimple.TmMap;
+import fullsimple.TyAlg;
 import fullsimple.TyEqv;
 import fullsimple.Typeof;
 import fullsimple.bindingalg.external.Bind;
 import fullsimple.bindingalg.external.BindingAlgFactory;
 import fullsimple.bindingalg.external.BindingAlgVisitor;
-import fullsimple.bindingalg.shared.GBindingAlg;
 import fullsimple.termalg.external.Term;
 import fullsimple.termalg.external.TermAlgFactory;
 import fullsimple.termalg.external.TermAlgMatcher;
 import fullsimple.termalg.external.TermAlgMatcherImpl;
 import fullsimple.termalg.external.TermAlgVisitor;
-import fullsimple.termalg.shared.GTermAlg;
 import fullsimple.tyalg.external.Ty;
 import fullsimple.tyalg.external.TyAlgFactory;
 import fullsimple.tyalg.external.TyAlgMatcher;
 import fullsimple.tyalg.external.TyAlgMatcherImpl;
 import fullsimple.tyalg.external.TyAlgVisitor;
-import fullsimple.tyalg.shared.GTyAlg;
 import library.Tuple2;
 import library.Tuple3;
 import utils.Context;
@@ -90,12 +90,12 @@ public class TestFullsimple {
 		}
 
 		@Override
-		public GTyAlg<Ty, Ty> tyAlg() {
+		public TyAlg<Ty> tyAlg() {
 			return tyFact;
 		}
 
 		@Override
-		public GBindingAlg<Bind<Term<Ty>, Ty>, Term<Ty>, Ty, Bind<Term<Ty>, Ty>> bindAlg() {
+		public BindingAlg<Bind<Term<Ty>, Ty>, Term<Ty>, Ty> bindAlg() {
 			return bindFact;
 		}
 	}
@@ -107,7 +107,7 @@ public class TestFullsimple {
 	  public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
 	    return new TermAlgMatcherImpl<>();
 	  }
-	  public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	  public Term<Ty> termSubstTop(Term<Ty> s, Term<Ty> t) {
@@ -128,7 +128,7 @@ public class TestFullsimple {
 	class IsNumericValImpl implements IsNumericVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 	class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 	class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-	  public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	}

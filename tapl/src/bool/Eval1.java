@@ -4,7 +4,7 @@ import bool.termalg.external.TermAlgMatcher;
 import bool.termalg.shared.GTermAlg;
 
 public interface Eval1<Term> extends GTermAlg<Term, Term>, utils.Eval1<Term> {
-	GTermAlg<Term, Term> alg();
+	TermAlg<Term> alg();
 	TermAlgMatcher<Term, Term> matcher();
 
 	@Override default Term TmIf(Term t1, Term t2, Term t3) {

@@ -5,7 +5,7 @@ import fullerror.termalg.shared.GTermAlg;
 
 public interface Eval1<Term, Ty> extends GTermAlg<Term, Ty, Term>, simplebool.Eval1<Term, Ty> {
 	@Override TermAlgMatcher<Term, Ty, Term> matcher();
-	@Override GTermAlg<Term, Ty, Term> alg();
+	@Override TermAlg<Term, Ty> alg();
 
 	@Override default Term TmIf(Term t1, Term t2, Term t3) {
 		return matcher()

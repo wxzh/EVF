@@ -1,7 +1,7 @@
 package benchmark.listalg.shared;
 
 public interface ListAlgTransform<List> extends benchmark.listalg.shared.GListAlg<List, List> {
-	benchmark.listalg.shared.GListAlg<List, List> alg();
+	benchmark.ListAlg<List> alg();
 
 	default List Nil() {
 		return alg().Nil();

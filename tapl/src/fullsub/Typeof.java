@@ -2,13 +2,12 @@ package fullsub;
 
 import fullsub.termalg.shared.GTermAlg;
 import fullsub.tyalg.external.TyAlgMatcher;
-import fullsub.tyalg.shared.GTyAlg;
 import utils.ITypeof;
 
 public interface Typeof<Term, Ty, Bind> extends GTermAlg<Term, Ty, ITypeof<Ty, Bind>>,
     moreextension.Typeof<Term, Ty, Bind>, top.Typeof<Term, Ty, Bind> {
 	@Override TyAlgMatcher<Ty, Ty> tyMatcher();
-	@Override GTyAlg<Ty, Ty> tyAlg();
+	@Override TyAlg<Ty> tyAlg();
 	Ty join(Ty ty1, Ty ty2);
 
 	@Override default ITypeof<Ty, Bind> TmIf(Term t1, Term t2, Term t3) {

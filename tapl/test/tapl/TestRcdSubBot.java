@@ -15,7 +15,9 @@ import rcdsubbot.IsVal;
 import rcdsubbot.Print;
 import rcdsubbot.PrintTy;
 import rcdsubbot.Subtype;
+import rcdsubbot.TermAlg;
 import rcdsubbot.TmMap;
+import rcdsubbot.TyAlg;
 import rcdsubbot.TyEqv;
 import rcdsubbot.Typeof;
 import rcdsubbot.termalg.external.Term;
@@ -23,19 +25,17 @@ import rcdsubbot.termalg.external.TermAlgFactory;
 import rcdsubbot.termalg.external.TermAlgMatcher;
 import rcdsubbot.termalg.external.TermAlgMatcherImpl;
 import rcdsubbot.termalg.external.TermAlgVisitor;
-import rcdsubbot.termalg.shared.GTermAlg;
 import rcdsubbot.tyalg.external.Ty;
 import rcdsubbot.tyalg.external.TyAlgFactory;
 import rcdsubbot.tyalg.external.TyAlgMatcher;
 import rcdsubbot.tyalg.external.TyAlgMatcherImpl;
 import rcdsubbot.tyalg.external.TyAlgVisitor;
-import rcdsubbot.tyalg.shared.GTyAlg;
+import typed.BindingAlg;
 import typed.GetTypeFromBind;
 import typed.PrintBind;
 import typed.bindingalg.external.Bind;
 import typed.bindingalg.external.BindingAlgFactory;
 import typed.bindingalg.external.BindingAlgVisitor;
-import typed.bindingalg.shared.GBindingAlg;
 import utils.Context;
 import utils.Eval;
 import utils.IPrint;
@@ -90,16 +90,16 @@ public class TestRcdSubBot {
 			return new TyAlgMatcherImpl<>();
 		}
 
-		@Override public GTyAlg<Ty, Ty> tyAlg() {
+		@Override public TyAlg<Ty> tyAlg() {
 			return tyFact;
 		}
-		@Override public GBindingAlg<Bind<Ty>, Ty, Bind<Ty>> bindAlg() {
+		@Override public BindingAlg<Bind<Ty>, Ty> bindAlg() {
 		  return bindFact;
 		}
 	}
 
 	class Eval1Impl implements Eval1<Term<Ty>, Ty>, TermAlgVisitor<Term<Ty>, Ty> {
-    public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+    public TermAlg<Term<Ty>, Ty> alg() {
       return tmFact;
     }
     @Override public TermAlgMatcher<Term<Ty>, Ty, Term<Ty>> matcher() {
@@ -125,7 +125,7 @@ public class TestRcdSubBot {
 	class IsValImpl implements IsVal<Term<Ty>, Ty>, TermAlgVisitor<Boolean, Ty> {}
 
 	class TmMapImpl implements TmMap<Term<Ty>, Ty>, TermAlgVisitor<Function<TmMapCtx<Term<Ty>>,Term<Ty>>, Ty> {
-	  @Override public GTermAlg<Term<Ty>, Ty, Term<Ty>> alg() {
+	  @Override public TermAlg<Term<Ty>, Ty> alg() {
 	    return tmFact;
 	  }
 	}
