@@ -246,7 +246,7 @@ public class VisitProcessor extends AbstractProcessor {
         content += " {\n";
         content += self.joinMethodsWithNewline(method -> TAB
                 + method.substTypes(self.tvars::contains, t -> t).currying(O) + " " + method.name + MAPPER + "();");
-        content += "}";
+        content += "\n}";
 
         write(name, content);
     }
@@ -327,8 +327,7 @@ public class VisitProcessor extends AbstractProcessor {
         String tvarString = printTvars(self.joinTvars(), O);
         content += "public interface " + thisWith(MATCHER) + tvarString + " extends " + thisWith(MAPPER)
                 + printTvars(self.joinUsedTvars(), O);
-        content += self.mapParents(", ",
-                parent -> qualifiedName(parent) + MATCHER + printTvars(parent.joinTvars(), O));
+        content += self.mapParents(", ", parent -> qualifiedName(parent) + MATCHER + printTvars(parent.joinTvars(), O));
         content += " {\n";
         content += self.joinAllMethodsWithNewline(method -> TAB + thisWith(MATCHER) + tvarString + " " + method.name
                 + "(" + method.substTypes(self.tvars::contains, t -> t).currying(O) + " " + method.name + ");");
