@@ -1,11 +1,14 @@
-% EVF User Guide
-
-System Requirements
+Prerequisite
 ===================
 
 - JDK 8 or newer
 - Eclipse
 - Git
+
+Additional requirement for running the script
+
+- Ruby
+- [cloc](https://github.com/AlDanial/cloc)
 
 Download
 ========
@@ -18,12 +21,13 @@ Download
 
 Three Eclipse projects, `VisitProcessor` and `tapl`, will be imported, which are:
 
-- `VisitProcessor` contains the implementation of **EVF**, an expressive and extensible Java visitor framework.
-- `tapl` contains the case study on “Types and Programming Languages”.
-- `benchmark` contains the micro-benchmark
+- `VisitProcessor` contains the implementation of an annotation processor;
+- `tapl` contains the case study on “Types and Programming Languages”;
+- `benchmark` contains the micro-benchmark.
 
-If everything is OK, a folder called `generated` will be generated under the folder `tapl`.
-If not, please follow the steps below to manually configure annotation processing in eclipse:
+If you see a folder `generated` under the folder `tapl` that contains the generated code,  you have successfully imported the projects.
+
+If not, please follow the steps below to manually configure annotation processing in Eclipse:
 
 1.  Open Properties -> Java Compiler -> Annotation Processing
   - tick "Enable project specific settings"
@@ -39,13 +43,12 @@ If not, please follow the steps below to manually configure annotation processin
 An Example
 ==========
 
-We are going to model a tiny expression language that supports only literals and additions (full code can be found in `benchmark/pkg/Example.java`).
+To have a rough idea of the functionality of the framework, 
+we are going to model a tiny expression language that supports only literals and additions (full code can be found in `benchmark/evf/Example.java`).
 
-Inside project `tapl`, create a new package called `pkg`.
-Inside that package, create a file called `Alg.java` that contains the following code:
+Create a file called `Alg.java` inside some package and paste the following code to that file:
 
-```
-package pkg;
+```java
 import annotation.Visitor;
 
 @Visitor interface Alg<Exp> {
@@ -54,34 +57,31 @@ import annotation.Visitor;
 }
 ```
 
-which is an Object Algebra interface that describes the language.
-By annotating `Alg` with `@Visitor` and saving the file in eclipse, code generation will be triggered.
-You will see some new files will appear under the `generated` directory:
-
-- `pkg.Alg.internal` package: internal visitor infrastructure
-- `pkg.Alg.external` package: external visitor infrastructure
-- `pkg.Alg.shared` package:  traversal templates
+which is an Object Algebra interface that describes the language annotated with `@Visitor`.
+By saving the file in Eclipse, you will see some new files generated under the `generated` directory.
+These files are code for AST and traversal templates associated to `Alg`. 
 
 We will use the generated code for implementing the semantics of this language next.
 
 For example, the evaluator for the language looks like this:
 
-```
-interface Eval<Exp> extends GAlg<Exp, Integer> {
+```java
+interface Eval<E> extends GAlg<E, Integer> {
   default Integer Lit(int n) {
     return n;
   }
-  default Integer Add(Exp e1, Exp e2) {
-    return visitExp(e1) + visitExp(e2);
+  default Integer Add(E e1, E e2) {
+    return visitE(e1) + visitE(e2);
   }
 }
 ```
-where `GAlg` is the generated modular external visitor interface from `pkg.Alg.shared`.
+where `GAlg` is the generated modular external visitor interface.
+You can directly the generated code without import statements as it is of the same package.
 
 Another example that illustrates how to use the traversal template to eliminate boilerplate is as follows:
 
-```
-interface Double<Exp> extends AlgTransform<Exp> {
+```java
+interface Double<E> extends AlgTransform<E> {
   default Exp Lit(int n) {
     return alg().Lit(n*2);
   }
@@ -90,28 +90,29 @@ interface Double<Exp> extends AlgTransform<Exp> {
 
 `Double` doubles every literal in an expression. The transformation template `AlgTransform` covers the `Add` case, which recursively calls `Double` on two sub-expressions and then forms a new addition.
 
-We need code under `pkg.Alg.external` for instantiating `Eval` and `Double` as classes:
+To instantiate `Eval` and `Double` as classes, we define:
 
-```
-class EvalImpl implements Eval<Exp>, AlgVisitor<Integer> {}
-class DoubleImpl implements Double<Exp>, AlgVisitor<Exp> {
-  public GAlg<Exp,Exp> alg() {
+```java
+class EvalImpl implements Eval<CE>, AlgVisitor<Integer> {}
+class DoubleImpl implements Double<CE>, AlgVisitor<CE> {
+  public Alg<CE> alg() {
     return new AlgFactory();
   }
 }
 ```
-We instantiate the type parameter using the generated AST type of the same name and mixin in an `AlgVisitor` for giving an implementation of `visitExp`.
+
+We instantiate the type parameter using the generated AST type `CExp` and mixin in an `AlgVisitor` for giving an implementation of `visitExp`.
 For `Double`, we additionally need the generated factory class for fulfilling the dependency.
 
 Here is some client code illustrating how to use what we have defined:
 
-```
+```java
 AlgFactory f = new AlgFactory();
-Exp e = f.Add(f.Lit(1), f.Lit(2));
+CE e = f.Add(f.Lit(1), f.Lit(2));
 EvalImpl eval = new EvalImpl();
 DoubleImpl dbl = new DoubleImpl();
-System.out.println(eval.visitExp(e)); // 3
-System.out.println(eval.visitExp(dbl.visitExp(e))); // 6
+System.out.println(eval.visitE(e)); // 3
+System.out.println(eval.visitE(dbl.visitE(e))); // 6
 ```
 
 We use the generated factory to construct an expression `1+2`.
@@ -123,11 +124,9 @@ For more examples, please have a look on the paper and files under `tapl` such a
 Case Study
 ===
 
-To run the scripts, you need [ruby](https://www.ruby-lang.org/en/downloads/) and [cloc](https://github.com/AlDanial/cloc).
+Run `ruby casestudy.rb` to collect SLOC statistics (Table 1 & 2)
 
-Run `ruby casestudy.rb` for collecting SLOC statistics (Table 1 & 2)
-
-Performance Measurement
+Benchmark
 ===
 
 Run `Benchmark.java` under the project `benchmark` for measuring the performance (Table 3)

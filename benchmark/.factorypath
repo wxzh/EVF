@@ -1,3 +1,4 @@
 <factorypath>
+    <factorypathentry kind="WKSPJAR" id="/benchmark/Library.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="WKSPJAR" id="/VisitProcessor/visitprocessor.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

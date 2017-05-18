@@ -1,10 +1,10 @@
-package pkg;
+package evf;
 
 import annotation.Visitor;
 
-@Visitor interface Alg<Exp> {
-  Exp Lit(int n);
-  Exp Add(Exp e1, Exp e2);
+@Visitor interface Alg<E> {
+  E Lit(int n);
+  E Add(E e1, E e2);
 }
 
 interface Eval<Exp> extends GAlg<Exp, Integer> {
@@ -12,7 +12,7 @@ interface Eval<Exp> extends GAlg<Exp, Integer> {
     return n;
   }
   default Integer Add(Exp e1, Exp e2) {
-    return visitExp(e1) + visitExp(e2);
+    return visitE(e1) + visitE(e2);
   }
 }
 
@@ -21,9 +21,9 @@ interface Double<Exp> extends AlgTransform<Exp> {
     return alg().Lit(n*2);
   }
 }
-class EvalImpl implements Eval<CExp>, AlgVisitor<Integer> {}
-class DoubleImpl implements Double<CExp>, AlgVisitor<CExp> {
-  public Alg<CExp> alg() {
+class EvalImpl implements Eval<CE>, AlgVisitor<Integer> {}
+class DoubleImpl implements Double<CE>, AlgVisitor<CE> {
+  public Alg<CE> alg() {
     return new AlgFactory();
   }
 }
@@ -31,10 +31,10 @@ class DoubleImpl implements Double<CExp>, AlgVisitor<CExp> {
 class Example {
   public static void main(String[] args) {
     AlgFactory f = new AlgFactory();
-    CExp e = f.Add(f.Lit(1), f.Lit(2));
+    CE e = f.Add(f.Lit(1), f.Lit(2));
     EvalImpl eval = new EvalImpl();
     DoubleImpl dbl = new DoubleImpl();
-    System.out.println(eval.visitExp(e));
-    System.out.println(eval.visitExp(dbl.visitExp(e)));
+    System.out.println(eval.visitE(e));
+    System.out.println(eval.visitE(dbl.visitE(e)));
   }
 }
