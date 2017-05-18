@@ -1,14 +1,14 @@
 Prerequisite
 ===================
 
-- JDK 8 or newer
-- Eclipse
+- JDK (1.8 or later)
+- Eclipse (4.5.1 or later)
 - Git
 
 Additional requirement for running the script
 
-- Ruby
-- [cloc](https://github.com/AlDanial/cloc)
+- Ruby (2.0.0 or later)
+- [cloc](https://github.com/AlDanial/cloc) (1.62 or later)
 
 Download
 ========
