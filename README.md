@@ -1,4 +1,7 @@
-Prerequisite
+# Artifact for the ECOOP 2017 paper "EVF: An Extensible and Expressive Visitor Framework for Programming Language Reuse"
+
+
+Prerequisites
 ===================
 
 - JDK (1.8 or later)
