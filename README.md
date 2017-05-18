@@ -19,7 +19,7 @@ Download
   - Fill in URI: https://github.com/wxzh/EVF
   - Click Next for several times and Finish
 
-Three Eclipse projects, `VisitProcessor` and `tapl`, will be imported, which are:
+Three Eclipse projects will be imported, which are:
 
 - `VisitProcessor` contains the implementation of an annotation processor;
 - `tapl` contains the case study on “Types and Programming Languages”;
